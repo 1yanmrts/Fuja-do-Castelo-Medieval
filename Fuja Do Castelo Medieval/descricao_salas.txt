@@ -1,0 +1,11 @@
+entrada:
+
+corredor: 
+legal legal legal legal legal legal legal legal legal legal legal legal legal legal legal
+legal legal legal legal legal legal legal legal legal legal legal legal legal legal legal
+legal legal legal legal legal legal legal legal legal legal legal legal legal legal legal
+legal legal legal legal legal legal legal legal legal legal legal legal legal legal legal
+legal legal legal legal legal legal legal legal legal legal legal legal legal legal legal
+
+bau: 
+alguem alguem alguem
