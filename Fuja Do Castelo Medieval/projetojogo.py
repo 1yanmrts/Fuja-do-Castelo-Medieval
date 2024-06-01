@@ -79,7 +79,7 @@ def menuinicial(stdscr):
         time.sleep(0.11)
 
     for linha in range(len(imagem)):
-        stdscr.addstr((sh//2 - 8) + linha, 1, imagem[linha])
+        stdscr.addstr(sh//2 - 8 + linha, 1, imagem[linha])
         stdscr.refresh()
         time.sleep(0.11)
 
@@ -168,18 +168,18 @@ def main(stdscr):
     pos_y = 0
     vida = 100
 
+    display = curses.newwin(sh//2 + 6, sw//2 - 1, sh*3//10, sw//2)
     janela = curses.newwin(sh, sw, 0, 0)
-    janela_inv = curses.newwin(sh//4, sw//2 - 1, (sh*3//4) - 1, 1)
-    janela_action = curses.newwin(sh//3 - 3, sw//2 - 1, sh//2 - 1, 1)
-    janela_info = curses.newwin(sh//2, sw//2 - 1, sh//2 - 1, sw//2)
-    janela_info2 = curses.newwin(sh//2 - 3, sw//2 - 3, sh//2 + 1, sw//2 + 1) #Essa janela que vai receber os textos
+    janela_action = curses.newwin(sh//3 - 3, sw//2 - 1, (sh*3//4) - 1, 1) 
+    janela_info = curses.newwin(sh//2 - 3, sw//2 - 1, sh//2 - 7, 1)
+    janela_info2 = curses.newwin(sh//2 - 6, sw//2 - 4, sh//2 - 5, 2) #Essa janela que vai receber os textos
+    
+    display.border()
     janela.border()
-    janela_inv.border()
     janela_action.border()
     janela_info.border()
 
     janela.keypad(True)
-    janela_inv.keypad(True)
     janela_action.keypad(True)
     janela_info.keypad(True)
 
@@ -188,20 +188,6 @@ def main(stdscr):
         janela.addstr(2, 2, 'Vida: {}'.format(vida))
         janela_action.addstr(1, 1, 'Ação: ')
         janela_info.addstr(1, 1, 'Informações: ')
-        janela_inv.addstr(1, 1 , 'Inventário: ')
-
-        janela_inv.addstr(2, 1, '1: ')
-        janela_inv.addstr(2, 11, '2: ')
-        janela_inv.addstr(2, 21, '3: ')
-        janela_inv.addstr(2, 31, '4: ')
-        janela_inv.addstr(2, 41, '5: ')
-       
-        hotbar = inventario(stdscr)
-        if hotbar:
-            for i, (elemento) in enumerate(hotbar.keys()):
-                aux = f'{elemento}'
-                janela_inv.addstr(3, 10*i + 1, aux, curses.A_BOLD) 
-
 
         #Serve para apagar a info assim que passo para a sala seguinte e mostra a info da sala nova
         janela_info2.clear()
@@ -212,14 +198,44 @@ def main(stdscr):
                 if pos_y == linha and pos_x == coluna:
                     janela.addstr(linha + 5, sw//18 + coluna * (sw//5), matriz[linha][coluna], curses.A_STANDOUT)
                     janela_info2.addstr(1, 0, infosalas(matriz[linha][coluna]))
+                    room = matriz[linha][coluna]
                 else:
                     janela.addstr(linha + 5, sw//18 + coluna * (sw//5), matriz[linha][coluna])
         
+
+        #Mostrar o preview de cada sala
+        #TEM VÁRIOS ERROS AQUI
+        with open('preview_salas.txt', 'r') as arquivo:
+            conteudo = arquivo.read()
+        
+        linhas = conteudo.strip().split('\n')
+
+        contadordelinhas = 0
+        #EXISTEM VÁRIOS ERROS NESSE LOOP. 
+        for linha in linhas:
+            contadordelinhas += 1
+            linha = linha.strip()
+            if not linha:
+                continue
+            
+            if linha.endswith(':'):
+                if linha[:-1] == room:
+                    aux = 0
+                    for i in range(contadordelinhas, len(linhas)): 
+                        if linhas[i].endswith(':'):
+                            break
+                        else:
+                            display.addstr(1 + aux, 1, linhas[i])
+                        aux += 1
+                else:
+                    continue
+        
+
         janela.refresh()
-        janela_inv.refresh()
         janela_action.refresh()
         janela_info.refresh()
         janela_info2.refresh()
+        display.refresh()
 
         key = janela.getch()
     
@@ -259,7 +275,7 @@ def menuacao(stdscr):
     """
     sh, sw = tamanhojanela(stdscr)
 
-    janela = curses.newwin(sh//3 - 2, sw//2 - 1, sh//2 - 1, 1)
+    janela = curses.newwin(sh//3 - 3, sw//2 - 1, (sh*3//4) - 1, 1)
     janela.border()
     janela.keypad(True)
     janela.addstr(1, 1, 'Ação: ', curses.A_BLINK)
