@@ -41,12 +41,46 @@ def menuinicial(stdscr):
         '               |_|  |_|___|___/___|___| \_/_/ \_\____|',
     ]
 
+    imagem = [
+        "                         ._-_.",
+        "                         |_-_(",
+        "                         I",
+        "                        /_\ ___",
+        "            ._-_.   |,|/   \ ",
+        "            |_-_(   | /_____\       ._-_.",
+        "            I        \| u  -| _     |_-_(",
+        "           / \    -_-_-_-_--|/ \    I",
+        "          /___\   \._._._./-|___\  / \ ",
+        "          |_u |    |_   _| -| u_| /___\ ",
+        "          |_-_-_-_-_-  U_| -|  _| | u_|",
+        "          |_\._._._./   _|-_-_-_-_-_-_|",
+        "           \_|-   -|    _|    ..   -|_|",
+        "            \|-   U|    _| U  ++  U-|/",
+        "             |U   -|  U _|   ____  -|",
+        "             |- _ -|    _|  /|-|-\ -|",
+        "             |-/#\-|    _|  |-|-|| -|",
+        "         ,___|_MEB_|-----'__I|-|-I__|__,",
+        "      ._/ /                 \____/      \,",
+        "     /  \ \                  \```\        \,",
+        "    (__   _\                 |'''|         L_,",
+        "    /   ./ /                  \```\       /  _\ ",
+        "   |   /  /                   |'''|       \,   |",
+        "   /  (                       \```\       /  _/ \ ",
+        "  /_                           |'''|           _,|",
+        " |                                                \ ",
+    ]
+
     ytitul = (sh // 2) - 7
     xtitul = (sw - len(titulo[0]))//2
 
     for linha in range(len(titulo)):
         janela.addstr(ytitul + linha, xtitul, titulo[linha])
         janela.refresh()
+        time.sleep(0.11)
+
+    for linha in range(len(imagem)):
+        stdscr.addstr((sh//2 - 8) + linha, 1, imagem[linha])
+        stdscr.refresh()
         time.sleep(0.11)
 
     while True:
@@ -330,6 +364,7 @@ def salas(stdscr, room):
 
     with open('conteudos_salas.txt', 'r') as arquivo:
         conteudo = arquivo.read()
+        
     linhas = conteudo.strip().split('\n')
 
     contadordelinhas = 0
