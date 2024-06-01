@@ -156,17 +156,17 @@ def main(stdscr):
         janela_info.addstr(1, 1, 'Informações: ')
         janela_inv.addstr(1, 1 , 'Inventário: ')
 
-        janela_inv.addstr(3, 1, '1: ')
-        janela_inv.addstr(3, 11, '2: ')
-        janela_inv.addstr(3, 21, '3: ')
-        janela_inv.addstr(3, 31, '4: ')
-        janela_inv.addstr(3, 41, '5: ')
+        janela_inv.addstr(2, 1, '1: ')
+        janela_inv.addstr(2, 11, '2: ')
+        janela_inv.addstr(2, 21, '3: ')
+        janela_inv.addstr(2, 31, '4: ')
+        janela_inv.addstr(2, 41, '5: ')
        
         hotbar = inventario(stdscr)
         if hotbar:
             for i, (elemento) in enumerate(hotbar.keys()):
                 aux = f'{elemento}'
-                janela_inv.addstr(3, 10*i + 3, aux, curses.A_BOLD) 
+                janela_inv.addstr(3, 10*i + 1, aux, curses.A_BOLD) 
 
 
         #Serve para apagar a info assim que passo para a sala seguinte e mostra a info da sala nova
@@ -332,16 +332,23 @@ def salas(stdscr, room):
         conteudo = arquivo.read()
     linhas = conteudo.strip().split('\n')
 
-    #EXISTEM VÁRIOS ERROS NESSE LOOP. Como o de mostrar todas as linhas do arquivo
+    contadordelinhas = 0
+    #EXISTEM VÁRIOS ERROS NESSE LOOP. 
     for linha in linhas:
+        contadordelinhas += 1
         linha = linha.strip()
         if not linha:
             continue
-
+        
         if linha.endswith(':'):
             if linha[:-1] == room:
-                for i in range(len(linhas)):
-                    janela.addstr(1 + i, 1, linhas[i])
+                aux = 0
+                for i in range(contadordelinhas, len(linhas)): 
+                    if linhas[i].endswith(':'):
+                        break
+                    else:
+                        janela.addstr(1 + aux, 1, linhas[i])
+                    aux += 1
             else:
                 continue
 
