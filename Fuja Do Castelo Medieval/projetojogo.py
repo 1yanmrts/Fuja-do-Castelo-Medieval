@@ -189,9 +189,12 @@ def main(stdscr):
         janela_action.addstr(1, 1, 'Ação: ')
         janela_info.addstr(1, 1, 'Informações: ')
 
-        #Serve para apagar a info assim que passo para a sala seguinte e mostra a info da sala nova
+        #Serve para apagar a info/display assim que passo para a sala seguinte e mostra a info da sala nova
         janela_info2.clear()
+        display.clear()
         
+        display.border()
+
         #Mostrar a matriz e o lugar selecionado
         for linha in range(len(matriz)):
             for coluna in range(len(matriz[linha])):
@@ -230,7 +233,7 @@ def main(stdscr):
                 else:
                     continue
         
-
+        
         janela.refresh()
         janela_action.refresh()
         janela_info.refresh()
