@@ -76,12 +76,12 @@ def menuinicial(stdscr):
     for linha in range(len(titulo)):
         janela.addstr(ytitul + linha, xtitul, titulo[linha])
         janela.refresh()
-        time.sleep(0.11)
+        time.sleep(0.1)
 
     for linha in range(len(imagem)):
         stdscr.addstr(sh//2 - 8 + linha, 1, imagem[linha])
         stdscr.refresh()
-        time.sleep(0.11)
+        time.sleep(0.1)
 
     while True:
 
@@ -286,12 +286,30 @@ def menuacao(stdscr):
     curses.echo() #Essa função permite o input do usuário aparecer na janela
     texto = janela.getstr(2, 1) #Essa função permite o input do usuário
     curses.noecho()#Essa função desabilita a exibição do texto
+    
+    invent = inventario(stdscr)
+    palavras = texto.decode().split() #TEM QUE USAR O DECODE PQ "TEXTO" RECEBE STRINGS EM BYTES
+    print(palavras)
+
+
+    if 'usar' in palavras:
+        if palavras[1] in invent:
+            invent[palavras[1]] = 0
+
+
     main(stdscr)
 
     return texto
         
+def remover():
+    """Remover itens do inventário"""
+    pass
 
-def inventario(stdscr, keypressed = None):
+def mover():
+    "Mover itens do inventário"
+    pass
+
+def inventario(stdscr, item = None, keypressed = None):
     """Inventário representado por um dicionário com itens sendo chaves e valores sendo suas utilidades"""
     mochila = {'cura': 20, 'espada': 10, 'chapeu': 10}
 
