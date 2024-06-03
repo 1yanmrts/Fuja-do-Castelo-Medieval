@@ -7,6 +7,8 @@ if 'curses' not in sys.modules:
 
 import curses
 
+invent = {'cura': 20, 'espada': 10, 'chapeu': 10, 'elmo': 1}
+
 def tamanhojanela(stdscr):
     """Define o tamanho da janela!"""
     a, b = stdscr.getmaxyx()
@@ -161,18 +163,18 @@ def main(stdscr):
         ['calabouço', 'quarto real', 'corredor', 'trono em ruínas', 'biblioteca'],
         ['celas', 'ponte', 'jardim', 'chafariz monumental', 'muralha'],
         ['feudo', 'sala de armadilhas', 'ruínas', 'corredor', 'saída'],
-    ]
+    ] 
 
     sh, sw = tamanhojanela(stdscr)
     pos_x = 0
     pos_y = 0
     vida = 100
 
-    display = curses.newwin(sh//2 + 6, sw//2 - 1, sh*3//10, sw//2)
+    display = curses.newwin(sh//2 + 6, sw//2 - 1, sh*3//10 + 2, sw//2)
     janela = curses.newwin(sh, sw, 0, 0)
     janela_action = curses.newwin(sh//3 - 3, sw//2 - 1, (sh*3//4) - 1, 1) 
-    janela_info = curses.newwin(sh//2 - 3, sw//2 - 1, sh//2 - 7, 1)
-    janela_info2 = curses.newwin(sh//2 - 6, sw//2 - 4, sh//2 - 5, 2) #Essa janela que vai receber os textos
+    janela_info = curses.newwin(sh//2 - 5, sw//2 - 1, sh//2 - 7, 1)
+    janela_info2 = curses.newwin(sh//2 - 8, sw//2 - 4, sh//2 - 5, 2) #Essa janela que vai receber os textos
     
     display.border()
     janela.border()
@@ -260,10 +262,10 @@ def main(stdscr):
             break
 
         if key == 9: #TECLA TAB
-            menuacao(stdscr)
+            menuacao(stdscr, "principal")
         
         if key == ord('I') or key == ord('i'): 
-            inventario(stdscr, 10)
+            inventario(stdscr, invent, 10)
             break
         
         if key == curses.KEY_ENTER or key == 10:
@@ -272,7 +274,7 @@ def main(stdscr):
             break
 
 
-def menuacao(stdscr):
+def menuacao(stdscr, check):
     """Aqui vai ser recebido os comando de texto que serão executados.
     Comandos como usar itens, armaduras, atacar, defender, etc.
     """
@@ -287,32 +289,34 @@ def menuacao(stdscr):
     texto = janela.getstr(2, 1) #Essa função permite o input do usuário
     curses.noecho()#Essa função desabilita a exibição do texto
     
-    invent = inventario(stdscr)
+    bag = inventario(stdscr, invent)
     palavras = texto.decode().split() #TEM QUE USAR O DECODE PQ "TEXTO" RECEBE STRINGS EM BYTES
     print(palavras)
 
 
     if 'usar' in palavras:
-        if palavras[1] in invent:
-            invent[palavras[1]] = 0
+        if palavras[1] in bag:
+            bag[palavras[1]] -= 1
 
+    if check == "principal":
+        main(stdscr)
+        return texto
 
-    main(stdscr)
-
-    return texto
+    if check == "sala":
+        salas(stdscr)
+        return texto
         
-def remover():
-    """Remover itens do inventário"""
-    pass
+# def remover():
+#     """Remover itens do inventário"""
+#     pass
 
-def mover():
-    "Mover itens do inventário"
-    pass
+# def mover():
+#     "Mover itens do inventário"
+#     pass
 
-def inventario(stdscr, item = None, keypressed = None):
+def inventario(stdscr, mochila = None, keypressed = None):
     """Inventário representado por um dicionário com itens sendo chaves e valores sendo suas utilidades"""
-    mochila = {'cura': 20, 'espada': 10, 'chapeu': 10}
-
+    
     if keypressed:
         sh, sw = tamanhojanela(stdscr)
 
@@ -336,8 +340,8 @@ def inventario(stdscr, item = None, keypressed = None):
                 main(stdscr)
                 break
         
-    return mochila
-            
+    return mochila   
+
 
 def infosalas(sala):
     """Informação de cada sala"""
@@ -387,15 +391,23 @@ def infosalas(sala):
     return info_salas.get(sala, 'Sem informações')
         
 
-def salas(stdscr, room):
+def salas(stdscr, room = None):
     """Janela que vai servir pra mostrar os conteúdos de uma sala"""
     curses.curs_set(0)
     stdscr.clear()
     stdscr.refresh()
 
     sh, sw = tamanhojanela(stdscr)
-
+    
     janela = curses.newwin(sh, sw, 0, 0)
+    janela_action = curses.newwin(sh//3 - 3, sw//2 - 1, (sh*3//4) - 1, 1)
+    janela_info = curses.newwin(sh//2, sw//2 - 1, sh//4 - 2, sw//2)
+    janela_info2 = curses.newwin(sh//2 - 3, sw//2 - 4, sh//2 - 12, sw//2 + 2)
+    janela_inventario = curses.newwin(sh//3 - 3, sw//2 - 1, sh*3//4 - 1, sw//2)
+    
+    janela_action.border()
+    janela_info.border()
+    janela_inventario.border()
     janela.border()
     janela.keypad(True)
 
@@ -425,9 +437,18 @@ def salas(stdscr, room):
                 continue
 
     while True:
+        
+        janela.refresh()
+        janela_action.refresh()
+        janela_info.refresh()
+        janela_info2.refresh()
+        janela_inventario.refresh()
+
         key = janela.getch()
         if key == 27: #TECLA ESC
             main(stdscr)
             break
+        if key == 9: #TECLA TAB
+            menuacao(stdscr, "sala")
 
 curses.wrapper(menuinicial)

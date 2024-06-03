@@ -19,3 +19,33 @@ ____/______/______/______/__"=._o--._   ;o|o;     _._;o;____/______/______/____
 ____/______/______/______/______/_____"=.o|o_.--""___/______/______/______/____
 /______/______/______/______/______/______/______/______/______/______/______/
 *******************************************************************************
+
+PARA ABRIR O BAU O SEGUINTE ENIGMA DEVERA SER RESPONDIDO
+
+Um homem descreve suas filhas, da seguinte forma 
+
+"Todas sao todas loiras, menos duas. Todas sao todas morenas, menos duas. Tao todas ruivas, menos duas." 
+
+Quantas filhas ele tem?
+
+entrada:
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+
+corredor:
+              __.......__
+            .-:::::::::::::-.
+          .:::''':::::::''':::.
+        .:::'     `:::'     `:::. 
+   .'\  ::'   ^^^  `:'  ^^^   '::  /`.
+  :   \ ::   _.__       __._   :: /   ;
+ :     \`: .' ___\     /___ `. :'/     ; 
+:       /\   (_|_)\   /(_|_)   /\       ;
+:      / .\   __.' ) ( `.__   /. \      ;
+:      \ (        {   }        ) /      ; 
+ :      `-(     .  ^"^  .     )-'      ;
+  `.       \  .'<`-._.-'>'.  /       .'
+    `.      \    \;`.';/    /      .'
+      `._    `-._       _.-'    _.'
+       .'`-.__ .'`-._.-'`. __.-'`.
+     .'       `.         .'       `.
+   .'           `-.   .-'           `.
