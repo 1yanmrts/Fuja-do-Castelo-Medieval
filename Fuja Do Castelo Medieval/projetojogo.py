@@ -210,7 +210,7 @@ def main(stdscr):
 
         #Mostrar o preview de cada sala
         #TEM VÁRIOS ERROS AQUI
-        with open('preview_salas.txt', 'r') as arquivo:
+        with open('preview_salas.txt', 'r', encoding='utf-8') as arquivo:
             conteudo = arquivo.read()
         
         linhas = conteudo.strip().split('\n')
@@ -274,7 +274,7 @@ def main(stdscr):
             break
 
 
-def menuacao(stdscr, check):
+def menuacao(stdscr, check, room = None):
     """Aqui vai ser recebido os comando de texto que serão executados.
     Comandos como usar itens, armaduras, atacar, defender, etc.
     """
@@ -303,7 +303,7 @@ def menuacao(stdscr, check):
         return texto
 
     if check == "sala":
-        salas(stdscr)
+        salas(stdscr, room)
         return texto
         
 # def remover():
@@ -346,9 +346,9 @@ def inventario(stdscr, mochila = None, keypressed = None):
 def infosalas(sala):
     """Informação de cada sala"""
     #NOMES IGUAIS ESTÃO DANDO CONFUSÃO NA HORA DE MOSTRAR A INFO DELES
-    with open('descricao_salas.txt', 'r') as arquivo:
+    with open('descricao_salas.txt', 'r', encoding='utf-8') as arquivo:
         conteudo = arquivo.read()
-
+    
     #serve para separar o conteúdo (string que contém as infos) em linhas quando tem espaço em branco (tipo enter)
     linhas = conteudo.strip().split('\n') 
     
@@ -411,7 +411,7 @@ def salas(stdscr, room = None):
     janela.border()
     janela.keypad(True)
 
-    with open('conteudos_salas.txt', 'r') as arquivo:
+    with open('conteudos_salas.txt', 'r', encoding='utf-8') as arquivo:
         conteudo = arquivo.read()
         
     linhas = conteudo.strip().split('\n')
@@ -435,20 +435,29 @@ def salas(stdscr, room = None):
                     aux += 1
             else:
                 continue
-
-    while True:
+    
+    match room:
         
-        janela.refresh()
-        janela_action.refresh()
-        janela_info.refresh()
-        janela_info2.refresh()
-        janela_inventario.refresh()
+        case 'bau':
+            while True:
+                janela.refresh()
+                janela_action.refresh()
+                janela_info.refresh()
+                janela_info2.refresh()
+                janela_inventario.refresh()
 
-        key = janela.getch()
-        if key == 27: #TECLA ESC
-            main(stdscr)
-            break
-        if key == 9: #TECLA TAB
-            menuacao(stdscr, "sala")
+                key = janela.getch()
+                if key == 27: #TECLA ESC
+                    main(stdscr)
+                    break
+                if key == 9: #TECLA TAB
+                    answer = menuacao(stdscr, "sala", room)
+                
+                if answer.decode() == '2123ond':
+                    janela_info2.addstr(1, 1, 'Você abriu o baú!')
+                    janela_info2.refresh()
+                else:
+                    salas(stdscr, room)
+    
 
 curses.wrapper(menuinicial)

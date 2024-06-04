@@ -19,16 +19,19 @@ ____/______/______/______/__"=._o--._   ;o|o;     _._;o;____/______/______/____
 ____/______/______/______/______/_____"=.o|o_.--""___/______/______/______/____
 /______/______/______/______/______/______/______/______/______/______/______/
 *******************************************************************************
+A SENHA PARA ABRIR O BAÚ CONSISTE NA JUNÇÃO DAS TRÊS RESPOSTAS ABAIXO
+---------------------------------------------------------------------------------
+1 - Sou um número muito especial na matemática, e nesse conjunto de números, sou
+o único par.
 
-PARA ABRIR O BAU O SEGUINTE ENIGMA DEVERA SER RESPONDIDO
+2 - Quais são os três números, nenhum dos quais é zero, que dão o mesmo resultado, 
+quer sejam somados ou multiplicados?
 
-Um homem descreve suas filhas, da seguinte forma 
+3 - Observe a sequência de letras: U D T Q C S S. Será que você consegue descobrir 
+quais são as próximas 3 letras?
+---------------------------------------------------------------------------------
 
-"Todas sao todas loiras, menos duas. Todas sao todas morenas, menos duas. Tao todas ruivas, menos duas." 
-
-Quantas filhas ele tem?
-
-entrada:
+entrada
 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 
 corredor:
