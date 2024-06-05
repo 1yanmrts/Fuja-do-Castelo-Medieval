@@ -2,6 +2,7 @@ import platform
 import sys
 import subprocess
 import time
+from conteudos import conteudossalas
 
 if platform.system() == 'Windows':
     if 'curses' not in sys.modules:
