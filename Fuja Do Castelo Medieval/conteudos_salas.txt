@@ -27,11 +27,11 @@ o único par.
 2 - Quais são os três números, nenhum dos quais é zero, que dão o mesmo resultado, 
 quer sejam somados ou multiplicados?
 
-3 - Observe a sequência de letras: U D T Q C S S. Será que você consegue descobrir 
+3 - Observe a sequência de letras: U D T Q C S S. Você conseguiria descobrir 
 quais são as próximas 3 letras?
 ---------------------------------------------------------------------------------
 
-entrada
+entrada:
 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 
 corredor:

@@ -116,6 +116,7 @@ def menuinicial(stdscr):
                     break
                 else:
                     break
+
     except curses.error:
         y, x = stdscr.getmaxyx()
         mensagem = 'Por favor, maximize a janela do terminal para o jogo rodar.'
@@ -133,8 +134,6 @@ def menuinicial(stdscr):
             if key == curses.KEY_RESIZE:
                 menuinicial(stdscr)
                 break
-
-
 
 
 def opcaocontroles(stdscr):
@@ -285,7 +284,7 @@ def main(stdscr):
             break
 
         if key == 9: #TECLA TAB
-            menuacao(stdscr, "principal")
+            menuacao(stdscr, "principal", janela_action)
         
         if key == ord('I') or key == ord('i'): 
             inventario(stdscr, invent, 10)
@@ -297,13 +296,11 @@ def main(stdscr):
             break
 
 
-def menuacao(stdscr, check, room = None):
+def menuacao(stdscr, check, window, room = None):
     """Aqui vai ser recebido os comando de texto que serão executados.
     Comandos como usar itens, armaduras, atacar, defender, etc.
     """
-    sh, sw = tamanhojanela(stdscr)
-
-    janela = curses.newwin(sh//3 - 3, sw//2 - 1, (sh*3//4) - 1, 1)
+    janela = window
     janela.border()
     janela.keypad(True)
     janela.addstr(1, 1, 'Ação: ', curses.A_BLINK)
@@ -423,14 +420,7 @@ def salas(stdscr, room = None):
     sh, sw = tamanhojanela(stdscr)
     
     janela = curses.newwin(sh, sw, 0, 0)
-    janela_action = curses.newwin(sh//3 - 3, sw//2 - 1, (sh*3//4) - 1, 1)
-    janela_info = curses.newwin(sh//2, sw//2 - 1, sh//4 - 2, sw//2)
-    janela_info2 = curses.newwin(sh//2 - 3, sw//2 - 4, sh//2 - 12, sw//2 + 2)
-    janela_inventario = curses.newwin(sh//3 - 3, sw//2 - 1, sh*3//4 - 1, sw//2)
-    
-    janela_action.border()
-    janela_info.border()
-    janela_inventario.border()
+
     janela.border()
     janela.keypad(True)
 
@@ -440,6 +430,7 @@ def salas(stdscr, room = None):
     linhas = conteudo.strip().split('\n')
 
     contadordelinhas = 0
+    maiorlinha = ''
     #EXISTEM VÁRIOS ERROS NESSE LOOP. 
     for linha in linhas:
         contadordelinhas += 1
@@ -455,32 +446,58 @@ def salas(stdscr, room = None):
                         break
                     else:
                         janela.addstr(1 + aux, 1, linhas[i])
+                        if len(linhas[i]) > len(maiorlinha):
+                            maiorlinha = linhas[i]
                     aux += 1
             else:
                 continue
+
+    janela_action = curses.newwin(sh//3 - 4, sw - len(maiorlinha), 1, len(maiorlinha) - 1)
+    janela_status = curses.newwin(sh//3 - 3, sw - len(maiorlinha), sh//3 - 2, len(maiorlinha) - 1)
+    janela_inventario = curses.newwin(sh - (2*sh//3 - 4), sw - len(maiorlinha), sh//2 + 1, len(maiorlinha) - 1)
     
+    janela_action.border()
+    janela_status.border()
+    janela_inventario.border()
+
     match room:
         
         case 'bau':
             while True:
+                janela_action.addstr(1, 1, 'Ação:')
+                janela_status.addstr(1, 1, 'Status:')
+                janela_inventario.addstr(1, 1, 'Inventário:')
+
                 janela.refresh()
                 janela_action.refresh()
-                janela_info.refresh()
-                janela_info2.refresh()
                 janela_inventario.refresh()
+                janela_status.refresh()
 
                 key = janela.getch()
                 if key == 27: #TECLA ESC
                     main(stdscr)
                     break
                 if key == 9: #TECLA TAB
-                    answer = menuacao(stdscr, "sala", room)
+                    answer = menuacao(stdscr, "sala", janela_action, room)
                 
-                if answer.decode() == '2123ond':
-                    janela_info2.addstr(1, 1, 'Você abriu o baú!')
-                    janela_info2.refresh()
-                else:
-                    salas(stdscr, room)
-    
+                # if answer.decode() == '2123ond':
+                # else:
+                #     salas(stdscr, room)
+        
+        case 'entrada':
+            while True:
+                janela_action.addstr(1, 1, 'Ação:')
+                janela_status.addstr(1, 1, 'Status:')
+                janela_inventario.addstr(1, 1, 'Inventário:')
+
+                janela.refresh()
+                janela_action.refresh()
+                janela_inventario.refresh()
+                janela_status.refresh()
+
+                key = janela.getch()
+                if key == 27: #TECLA ESC
+                    main(stdscr)
+                    break
 
 curses.wrapper(menuinicial)
