@@ -1,19 +1,22 @@
+import platform
 import sys
 import subprocess
 import time
 
-if 'curses' not in sys.modules:
-    subprocess.check_call(['pip', 'install', 'windows-curses'])
+if platform.system() == 'Windows':
+    if 'curses' not in sys.modules:
+        subprocess.check_call(['pip', 'install', 'windows-curses'])
+    import curses
+else:
+    import curses
 
-import curses
 
 invent = {'cura': 20, 'espada': 10, 'chapeu': 10, 'elmo': 1}
 
 def tamanhojanela(stdscr):
     """Define o tamanho da janela!"""
-    a, b = stdscr.getmaxyx()
-    a = int(a)
-    b = int(b)
+    a = 37 #meio tem valor igual a 19
+    b = 139 #meio tem valor igual a 70
     return(a, b)
 
 def menuinicial(stdscr):
@@ -26,10 +29,6 @@ def menuinicial(stdscr):
     pos_y = 0
 
     sh, sw = tamanhojanela(stdscr)
-
-    janela = curses.newwin(sh, sw, 0, 0)
-    janela.border()
-    janela.keypad(True)
 
     titulo = [
         ' ___ _   _    _  _     ___   ___     ___   _   ___ _____ ___ _    ___ ',
@@ -75,43 +74,67 @@ def menuinicial(stdscr):
     ytitul = (sh // 2) - 7
     xtitul = (sw - len(titulo[0]))//2
 
-    for linha in range(len(titulo)):
-        janela.addstr(ytitul + linha, xtitul, titulo[linha])
-        janela.refresh()
-        time.sleep(0.1)
+    try: 
+        janela = curses.newwin(sh, sw, 0, 0)
+        janela.border()
+        janela.keypad(True)
 
-    for linha in range(len(imagem)):
-        stdscr.addstr(sh//2 - 8 + linha, 1, imagem[linha])
+        for linha in range(len(titulo)):
+            janela.addstr(ytitul + linha, xtitul, titulo[linha])
+            janela.refresh()
+            time.sleep(0.1)
+
+        for linha in range(len(imagem)):
+            stdscr.addstr(sh//2 - 8 + linha, 1, imagem[linha])
+            stdscr.refresh()
+            time.sleep(0.1)
+
+        while True:
+
+            for i in range(len(botoes)):
+                if pos_y == i:
+                    janela.addstr(ytitul + 15 + i, (sw - len(botoes[i]))//2, botoes[i], curses.A_STANDOUT)
+                else:
+                    janela.addstr(ytitul + 15 + i, (sw - len(botoes[i]))//2, botoes[i])
+
+            janela.refresh()
+            tecla = janela.getch()  
+
+            if tecla == curses.KEY_UP and pos_y > 0 or tecla == 450 and pos_y > 0:
+                pos_y += -1
+            
+            if tecla == curses.KEY_DOWN and pos_y < len(botoes) - 1 or tecla == 456 and pos_y < len(botoes) - 1:
+                pos_y += 1
+
+            if tecla == 10 or tecla == curses.KEY_ENTER:
+                aux = botoes[pos_y]
+                if aux == botoes[0]:
+                    main(stdscr)
+                    break
+                elif aux == botoes[1]:
+                    opcaocontroles(stdscr)
+                    break
+                else:
+                    break
+    except curses.error:
+        y, x = stdscr.getmaxyx()
+        mensagem = 'Por favor, maximize a janela do terminal para o jogo rodar.'
+        stdscr.clear()
+        stdscr.addstr(y//2, (x - len(mensagem))//2, mensagem)
         stdscr.refresh()
-        time.sleep(0.1)
 
-    while True:
+        while y < 37 and  x < 139:
+            stdscr.clear()
+            stdscr.addstr(y//2, (x - len(mensagem))//2, mensagem)
+            stdscr.refresh()
+            y, x = stdscr.getmaxyx()
 
-        for i in range(len(botoes)):
-            if pos_y == i:
-                janela.addstr(ytitul + 15 + i, (sw - len(botoes[i]))//2, botoes[i], curses.A_STANDOUT)
-            else:
-                janela.addstr(ytitul + 15 + i, (sw - len(botoes[i]))//2, botoes[i])
-
-        janela.refresh()
-        tecla = janela.getch()  
-
-        if tecla == curses.KEY_UP and pos_y > 0 or tecla == 450 and pos_y > 0:
-            pos_y += -1
-        
-        if tecla == curses.KEY_DOWN and pos_y < len(botoes) - 1 or tecla == 456 and pos_y < len(botoes) - 1:
-            pos_y += 1
-
-        if tecla == 10 or tecla == curses.KEY_ENTER:
-            aux = botoes[pos_y]
-            if aux == botoes[0]:
-                main(stdscr)
+            key = stdscr.getch()
+            if key == curses.KEY_RESIZE:
+                menuinicial(stdscr)
                 break
-            elif aux == botoes[1]:
-                opcaocontroles(stdscr)
-                break
-            else:
-                break
+
+
 
 
 def opcaocontroles(stdscr):
@@ -170,7 +193,7 @@ def main(stdscr):
     pos_y = 0
     vida = 100
 
-    display = curses.newwin(sh//2 + 6, sw//2 - 1, sh*3//10 + 2, sw//2)
+    display = curses.newwin(sh//2 + 6, sw//2 - 1, sh*3//10, sw//2)
     janela = curses.newwin(sh, sw, 0, 0)
     janela_action = curses.newwin(sh//3 - 3, sw//2 - 1, (sh*3//4) - 1, 1) 
     janela_info = curses.newwin(sh//2 - 5, sw//2 - 1, sh//2 - 7, 1)
