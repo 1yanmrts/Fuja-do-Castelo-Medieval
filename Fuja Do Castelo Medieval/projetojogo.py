@@ -12,7 +12,7 @@ else:
 
 from itens import allitems
 
-inventario = {'cura': 20, 'espada': 1, 'tunica de peles': 1}
+inventario = {'cura': 20, 'espada': 1, 'túnica de peles': 1}
 life = 100
 damage = 10
 
@@ -294,15 +294,48 @@ def main(stdscr):
             break
 
 
-def popup(stdscr):
-    janela_popup = curses.newwin(20, 20, 13, 64)
+def popup(tipo = None, valor = None, qtd = None):
+    janela_popup = curses.newwin(10, 40, 13, 45)
     janela_popup.border()
     
-    janela_popup.addstr(5, 5, 'Oi')
-    janela_popup.refresh()
-    janela_popup.clear()
-    time.sleep(1)
+    if tipo == 'ataque':
+        janela_popup.addstr(1, 1, f'Você deu {valor} de dano ao inimigo!')
+        janela_popup.refresh()
+        janela_popup.clear()
+        time.sleep(1.4)
+    
+    if tipo == 'dano_recebido':
+        janela_popup.addstr(1, 1, f'Você recebeu {valor} de dano do inimigo!')
+        janela_popup.refresh()
+        janela_popup.clear()
+        time.sleep(1.4)
+    
+    if tipo == 'item':
+        if qtd > 1:
+            janela_popup.addstr(1, 1, f'Você recebeu um/uma {valor}!')
+        else:
+            janela_popup.addstr(1, 1, f'Você recebeu {qtd} {valor}!')
+        janela_popup.refresh()
+        janela_popup.clear()
+        time.sleep(1.4)
 
+    if tipo == 'errou':
+        janela_popup.addstr(1, 1, f'Tente novamente!')
+        janela_popup.refresh()
+        janela_popup.clear()
+        time.sleep(1.4)
+    
+    if tipo == 'equipar':
+        janela_popup.addstr(1, 1, f'Você equipou {valor}!')
+        janela_popup.refresh()
+        janela_popup.clear()
+        time.sleep(1.4)
+    
+    if tipo == 'n_equipou':
+        janela_popup.addstr(1, 1, f'{valor.title()} não está no seu inventário')
+        janela_popup.refresh()
+        janela_popup.clear()
+        time.sleep(1.4)
 
 def menuacao(stdscr, check, window, room=None):
     """Aqui vai ser recebido os comando de texto que serão executados.
@@ -352,6 +385,7 @@ def equipamento(item = None):
         inventario[item] -= 1
         tipo = allitems[item]['type']
         descricao = allitems[item]['description']
+        popup('equipar', item)
 
         if tipo == 'melee':
             dano = allitems[item]['value']
@@ -365,6 +399,7 @@ def equipamento(item = None):
             del inventario[item]
 
     else:
+        popup('n_equipou', item)
         pass
         
 
@@ -425,6 +460,45 @@ def gear(stdscr, mochila = None, keypressed = None):
                 break
         
     return mochila   
+
+
+def refresher(janelas, janelas_salas = None, room= None, stdscr = None):
+    # sh, sw = tamanhojanela(stdscr)
+    # janela = curses.newwin(sh, sw, 0, 0)
+
+    # janela.border()
+    # with open('conteudos_salas.txt', 'r', encoding='utf-8') as arquivo:
+    #     conteudo = arquivo.read()
+        
+    # linhas = conteudo.strip().split('\n')
+
+    # contadordelinhas = 0
+    # maiorlinha = ''
+    # for linha in linhas:
+    #     contadordelinhas += 1
+    #     linha = linha.strip()
+    #     if not linha:
+    #         continue
+        
+    #     if linha.endswith(':'):
+    #         if linha[:-1] == room:
+    #             aux = 0
+    #             for i in range(contadordelinhas, len(linhas)): 
+    #                 if linhas[i].endswith(':'):
+    #                     break
+    #                 else:
+    #                     janela.addstr(1 + aux, 1, linhas[i])
+    #                     if len(linhas[i]) > len(maiorlinha):
+    #                         maiorlinha = linhas[i]
+    #                 aux += 1
+    #         else:
+    #             continue
+
+    for i in range(len(janelas)):
+        janelas[i].clear()
+        janelas[i].border()
+        janelas[i].refresh()
+
 
 
 def infosalas(sala):
@@ -496,7 +570,6 @@ def salas(stdscr, room = None):
 
     contadordelinhas = 0
     maiorlinha = ''
-    #EXISTEM VÁRIOS ERROS NESSE LOOP. 
     for linha in linhas:
         contadordelinhas += 1
         linha = linha.strip()
@@ -554,23 +627,30 @@ def salas(stdscr, room = None):
                 janela_inventario.refresh()
                 janela_status.refresh()
 
+                janela_action.addstr(1, 1, 'Ação:')
+                janela_status.addstr(1, 1, 'Status:')
+                janela_inventario.addstr(1, 1, 'Inventário:')
+                
                 action = menuacao(stdscr, "sala", janela_action, room)
 
-                # if action.lower() == 'sair':
-                #     main(stdscr)
-                #     break
+                if action.lower() == 'sair':
+                    main(stdscr)
+                    break
                 
                 if action.lower() == '2123ond':
                     inventario['bolo'] = 1
+                    popup('item', 'bolo', 1)
                     inventario['pão'] = 5
+                    popup('item', 'pão', 5)
                     janela_inventario.refresh()
                     main(stdscr)
                     break
+        
                 else:
-                    janela_action.clear()
-                    janela_action.border()
-                    janela_action.refresh()
-                    janela_status.addstr(5, 5, 'Tente de novo!')
+                    popup('errou')
+                
+                windows = (janela_inventario, janela_status, janela_action)
+                refresher(windows)
         
         case 'entrada':
             while True:
@@ -588,7 +668,11 @@ def salas(stdscr, room = None):
                 janela_status.addstr(len(status) + 3, 1, f'Vida: {life}')
                 for i in range(len(status)):
                     janela_status.addstr(1 + i, 1, status[i])
-    
+
+                janela_inventario.addstr(1, 1, 'Inventário:')
+                for i, (elemento, valor) in enumerate(inventario.items()):
+                    aux = f'{elemento}: {valor}'
+                    janela_inventario.addstr(3 + i, 1, aux, curses.A_BOLD) 
                 
                 janela.refresh()
                 janela_action.refresh()
@@ -599,15 +683,12 @@ def salas(stdscr, room = None):
             
                 if action.lower() == 'atacar':
                     enemy_life -= damage
-                    life -= 60
-                    popup(stdscr)
+                    popup('ataque', damage)
+                    life -= 20
+                    popup('dano_recebido', 20)
                 
-                janela_status.clear()
-                janela_status.border()
-                janela_action.clear()
-                janela_action.border()
-                janela_action.refresh()
-
+                windows = (janela_inventario, janela_status, janela_action)
+                refresher(windows)
 
 
 curses.wrapper(menuinicial)

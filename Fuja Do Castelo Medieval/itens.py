@@ -4,7 +4,7 @@ allitems = {
         'description': 'lalalala',
         'value': 10, 
     },
-    'tunica de peles': {
+    'túnica de peles': {
         'type': 'armor',
         'description': 'ooaoaoaoaoa',
         'value': 50,
