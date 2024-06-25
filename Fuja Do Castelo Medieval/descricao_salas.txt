@@ -3,6 +3,8 @@ Você se sente estranho, parece que está sendo vigiado.
 Nessa entrada não parece ter nada de interessante além do papel
 escrito - 
 "VOCÊ SÓ PODERÁ SAIR DAQUI APÓS VISITAR TODAS AS SALAS!"
+"CUIDADO POIS AO ENTRAR NUMA SALA TALVEZ VOCÊ NÃO 
+CONSEGUIRÁ SAIR"
 
 corredor:
 Você bate de frente com um corredor um tanto quanto 
@@ -11,7 +13,7 @@ Porém, há certos barulhos estranhos. Talvez seja má ideia
 (ou quem sabe boa) verificar...
 
 bau:
-Um baú! Parece ser interessante, mas, não parece tão fácil de
+Um baú! Parece ser interessante, mas,                            não parece tão fácil de
 abrir..
 
 muralha:

@@ -1,7 +1,9 @@
-import platform
-import sys
-import subprocess
 import time
+import platform
+import random
+import subprocess
+import sys
+from itens import allitems
 
 if platform.system() == 'Windows':
     if 'curses' not in sys.modules:
@@ -10,12 +12,14 @@ if platform.system() == 'Windows':
 else:
     import curses
 
-from itens import allitems
+
 
 salas_ja_visitadas = []
 inventario = {'cura': 20, 'espada': 1, 'túnica de peles': 1}
 life = 100
 damage = 10
+chance_critico = 0.35 #35% de chance de dano crítico
+chance_errar = 0.4 #40% de chance de errar
 
 def tamanhojanela(stdscr):
     """Define o tamanho da janela!"""
@@ -295,75 +299,110 @@ def main(stdscr):
             break
 
 
-def popup(tipo = None, valor = None, qtd = None):
+def popup(tipo = None, valor = None, qtd = None, stdscr = None):
     janela_popup = curses.newwin(10, 40, 13, 45)
     janela_popup.border()
     
-    if tipo == 'ataque':
-        janela_popup.addstr(1, 1, f'Você deu {valor} de dano ao inimigo!')
-        janela_popup.refresh()
-        janela_popup.clear()
-        time.sleep(1.4)
-    
-    if tipo == 'dano_recebido':
-        janela_popup.addstr(1, 1, f'Você recebeu {valor} de dano do inimigo!')
-        janela_popup.refresh()
-        janela_popup.clear()
-        time.sleep(1.4)
-    
-    if tipo == 'item':
-        if qtd > 1:
-            janela_popup.addstr(1, 1, f'Você recebeu um/uma {valor}!')
-        else:
-            janela_popup.addstr(1, 1, f'Você recebeu {qtd} {valor}!')
-        janela_popup.refresh()
-        janela_popup.clear()
-        time.sleep(1.4)
+    match tipo:
 
-    if tipo == 'errou':
-        janela_popup.addstr(1, 1, f'Tente novamente!')
-        janela_popup.refresh()
-        janela_popup.clear()
-        time.sleep(1.4)
-    
-    if tipo == 'equipar':
-        janela_popup.addstr(1, 1, f'Você equipou {valor}!')
-        janela_popup.refresh()
-        janela_popup.clear()
-        time.sleep(1.4)
-    
-    if tipo == 'n_equipou':
-        janela_popup.addstr(1, 1, f'{valor.title()} não está no seu inventário')
-        janela_popup.refresh()
-        janela_popup.clear()
-        time.sleep(1.4)
+        case 'ataque':
+            janela_popup.addstr(1, 1, f'Você deu {valor} de dano ao inimigo!')
+            janela_popup.refresh()
+            janela_popup.clear()
+            time.sleep(1.4)
+        
+        case 'dano_recebido':
+            janela_popup.addstr(1, 1, f'Você recebeu {valor} de dano do inimigo!')
+            janela_popup.refresh()
+            janela_popup.clear()
+            time.sleep(1.4)
+        
+        case 'item':
+            if qtd == 1:
+                janela_popup.addstr(1, 1, f'Você recebeu um/uma {valor}!')
+            else:
+                janela_popup.addstr(1, 1, f'Você recebeu {qtd} {valor}s!')
+            janela_popup.refresh()
+            janela_popup.clear()
+            time.sleep(1.4)
 
-    if tipo == 'visited':
-        janela_popup.addstr(1, 1, 'Sala já visitada!')
-        janela_popup.refresh()
-        janela_popup.clear()
-        time.sleep(1.4)
-    
-    if tipo == 'saída':
-        janela_popup.addstr(1, 1, 'Você precisa visitar')
-        janela_popup.addstr(2, 1, 'todas as salas para sair!')
-        janela_popup.addstr(5, 1, f'Ainda faltam {24 - len(salas_ja_visitadas)} salas!')
-        janela_popup.refresh()
-        janela_popup.clear()
-        time.sleep(1.4)
-    
-    if tipo == 'vitoria':
-        janela_popup.addstr(1, 1, 'Você derrotou seu inimigo!')
-        janela_popup.refresh()
-        janela_popup.clear()
-        time.sleep(1.4)
+        case 'errou':
+            janela_popup.addstr(1, 1, f'Tente novamente!')
+            janela_popup.refresh()
+            janela_popup.clear()
+            time.sleep(1.4)
+        
+        case 'equipar':
+            janela_popup.addstr(1, 1, f'Você equipou {valor}!')
+            janela_popup.refresh()
+            janela_popup.clear()
+            time.sleep(1.4)
+        
+        case 'n_equipou':
+            janela_popup.addstr(1, 1, f'{valor.title()} não está no seu inventário')
+            janela_popup.refresh()
+            janela_popup.clear()
+            time.sleep(1.4)
 
-    if tipo == 'gameover':
-        janela_popup.addstr(1, 1, 'GAME OVER')
-        janela_popup.addstr(3, 1, 'Você foi derrotado!')
-        janela_popup.refresh()
-        janela_popup.clear()
-        time.sleep(1.4)
+        case 'visited':
+            janela_popup.addstr(1, 1, 'Sala já visitada!')
+            janela_popup.refresh()
+            janela_popup.clear()
+            time.sleep(1.4)
+        
+        case 'saída':
+            janela_popup.addstr(1, 1, 'Você precisa visitar')
+            janela_popup.addstr(2, 1, 'todas as salas para sair!')
+            janela_popup.addstr(5, 1, f'Ainda faltam {24 - len(salas_ja_visitadas)} salas!')
+            janela_popup.refresh()
+            janela_popup.clear()
+            time.sleep(1.4)
+        
+        case 'vitoria':
+            janela_popup.addstr(1, 1, 'Você derrotou seu inimigo!')
+            janela_popup.refresh()
+            janela_popup.clear()
+            time.sleep(1.4)
+
+        case'gameover':
+            janela_popup.addstr(1, 1, 'GAME OVER')
+            janela_popup.addstr(3, 1, 'Você foi derrotado!')
+            janela_popup.refresh()
+            janela_popup.clear()
+            time.sleep(1.4)
+            quit()
+            
+        
+        case 'inimigo_errou':
+            janela_popup.addstr(1, 1, 'Seu inimigo errou o ataque!')
+            janela_popup.refresh()
+            janela_popup.clear()
+            time.sleep(1.4)
+        
+        case 'errou_ataque':
+            janela_popup.addstr(1, 1, 'Você errou seu ataque!')
+            janela_popup.refresh()
+            janela_popup.clear()
+            time.sleep(1.4)
+
+        case 'critical':
+            janela_popup.addstr(1, 1, 'DANO CRÍTICO!')
+            janela_popup.addstr(3, 1, f'Você deu {valor} de dano ao inimgo')
+            janela_popup.refresh()
+            janela_popup.clear()
+            time.sleep(1.4)
+        
+        case 'enemy_critical':
+            janela_popup.addstr(1, 1, 'DANO CRÍTICO DO INIMIGO!')
+            janela_popup.addstr(2, 1, f'Você recebeu {valor} de dano do inimigo')
+            janela_popup.refresh()
+            janela_popup.clear()
+            time.sleep(1.4)
+        case 'curou':
+            janela_popup.addstr(1, 1, 'Você curou 20 de vida!')
+            janela_popup.refresh()
+            janela_popup.clear()
+            time.sleep(1.4)
 
 def menuacao(stdscr, check, window, room=None):
     """Aqui vai ser recebido os comando de texto que serão executados.
@@ -392,19 +431,43 @@ def menuacao(stdscr, check, window, room=None):
     if check == "principal":
         return texto
 
-    if check == "sala":
-        if texto.lower() == 'sair':
-            main(stdscr)
-        elif texto.lower() == 'curar' and life < 100:
+    if check == "sala" or check == 'principal':
+        if texto.lower() == 'curar' and life < 100:
             if life + 20 > 100:
                 life += (life + 20) - 100
+                inventario['cura'] -= 1
             else: 
                 life += 20
+                inventario['cura'] -= 1
+            popup('curou')
             return texto
 
         else:
             return texto
     
+
+def combate(dano_do_inimigo, damage, chance_critico, chance_errar):
+    numero_aleatorio = random.random() #gera um número entre 0 e 1
+    numero_aleatorio2 = random.random()
+
+    dano_feito = damage
+    dano_levado = dano_do_inimigo
+
+    if numero_aleatorio < chance_errar:
+        dano_feito = 0
+
+    if numero_aleatorio < chance_critico:
+        dano_feito = damage * 2
+
+    if numero_aleatorio2 < chance_errar:
+        dano_levado = 0
+    
+    if numero_aleatorio2 < chance_critico:
+        dano_levado = dano_do_inimigo * 2
+
+    return dano_feito, dano_levado
+
+
         
 def equipamento(item = None):
     """função para ver quais itens estão equipados"""
@@ -587,9 +650,9 @@ def salas(stdscr, room = None, save= None):
             else:
                 continue
 
-    janela_action = curses.newwin(sh//3 - 4, sw - len(maiorlinha), 1, len(maiorlinha) - 1)
-    janela_status = curses.newwin(sh//3 - 3, sw - len(maiorlinha), sh//3 - 2, len(maiorlinha) - 1)
-    janela_inventario = curses.newwin(sh - (2*sh//3 - 4), sw - len(maiorlinha), sh//2 + 1, len(maiorlinha) - 1)
+    janela_action = curses.newwin(sh//3 - 4, sw - len(maiorlinha) - 2, 1, len(maiorlinha) + 1)
+    janela_status = curses.newwin(sh//3 - 3, sw - len(maiorlinha) - 2, sh//3 - 2, len(maiorlinha) + 1)
+    janela_inventario = curses.newwin(sh - (2*sh//3 - 4), sw - len(maiorlinha) - 2, sh//2 + 1, len(maiorlinha) + 1)
     
     janela_action.border()
     janela_status.border()
@@ -680,49 +743,71 @@ def salas(stdscr, room = None, save= None):
                 main(stdscr)
 
         case 'corredor':
-            if save:
-                enemy_life = save
+            if 'corredor' not in salas_ja_visitadas:
+                if save:
+                    enemy_life = save
+                else:
+                    enemy_life = 100
+                dano_do_inimigo = 25
+                while True:
+                    janela.addstr(sh - 2, 2, f"vida: {enemy_life}")
+                    janela_status.addstr(len(status) + 3, 1, f'Vida: {life}')
+                    for i in range(len(status)):
+                        janela_status.addstr(1 + i, 1, status[i])
+
+                    janela_inventario.addstr(1, 1, 'Inventário:')
+                    for i, (elemento, valor) in enumerate(inventario.items()):
+                        aux = f'{elemento}: {valor}'
+                        janela_inventario.addstr(3 + i, 1, aux, curses.A_BOLD) 
+                    
+                    janela.refresh()
+                    janela_action.refresh()
+                    janela_inventario.refresh()
+                    janela_status.refresh()
+
+                    action = menuacao(stdscr, "sala", janela_action, room)
+                    dano_feito, dano_levado = combate(dano_do_inimigo, damage, chance_critico, chance_errar)
+                    
+                    if action.lower() == 'atacar':
+                        if dano_feito == 0:
+                            popup('errou_ataque')
+                        elif dano_feito == damage * 2.0:
+                            popup('critical', dano_feito)
+                            enemy_life -= dano_feito
+                        else:
+                            enemy_life -= dano_feito
+                            popup('ataque', dano_feito)
+
+                    if enemy_life <= 0:
+                        popup('vitoria')
+                        salas_ja_visitadas.append('corredor')
+                        inventario['capa do drácula'] = 1
+                        inventario['cura'] += 5
+                        popup('item', 'capa do drácula', 1)
+                        popup('item', 'cura', 5)
+                        main(stdscr)
+                        break
+                    
+                    if dano_levado == 0:
+                        popup('inimigo_errou')
+                    
+                    if dano_levado == dano_do_inimigo * 2.0:
+                        popup('enemy_critical', dano_levado)
+                        life -= dano_levado
+                    else:
+                        life -= dano_levado
+                        popup('dano_recebido', dano_levado)
+                    
+                    if life < 0:
+                        popup('gameover', stdscr=stdscr)
+                        salas_ja_visitadas.append('corredor')
+                        break
+                
+                    salas(stdscr, room='corredor', save=enemy_life)
+            
             else:
-                enemy_life = 100
-            while True:
-                janela.addstr(sh - 2, 2, f"vida: {enemy_life}")
-                janela_status.addstr(len(status) + 3, 1, f'Vida: {life}')
-                for i in range(len(status)):
-                    janela_status.addstr(1 + i, 1, status[i])
-
-                janela_inventario.addstr(1, 1, 'Inventário:')
-                for i, (elemento, valor) in enumerate(inventario.items()):
-                    aux = f'{elemento}: {valor}'
-                    janela_inventario.addstr(3 + i, 1, aux, curses.A_BOLD) 
-                
-                janela.refresh()
-                janela_action.refresh()
-                janela_inventario.refresh()
-                janela_status.refresh()
-
-                action = menuacao(stdscr, "sala", janela_action, room)
-            
-                if action.lower() == 'atacar':
-                    enemy_life -= damage
-                    popup('ataque', damage)
-                    life -= 15
-                    popup('dano_recebido', 15)
-                
-                if life < 0:
-                    popup('gameover')
-                    main(stdscr)
-                    salas_ja_visitadas.append('corredor')
-                    break
-
-                if enemy_life <= 0:
-                    popup('vitoria')
-                    main(stdscr)
-                    salas_ja_visitadas.append('corredor')
-                    break
-            
-                salas(stdscr, room='corredor', save=enemy_life)
-                # windows = (janela_inventario, janela_status, janela_action)
-                # refresher(windows)
+                popup('visited')
+                main(stdscr)
             
         case 'biblioteca':
             while True:

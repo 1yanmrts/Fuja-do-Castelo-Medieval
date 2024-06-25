@@ -14,4 +14,9 @@ allitems = {
         'description': 'cura 20 em sua vida',
         'value': 20,
     },
+    'capa do drácula': {
+        'type': 'armor',
+        'description': 'agora cê tá estiloso',
+        'value': 100,
+    }
 }
