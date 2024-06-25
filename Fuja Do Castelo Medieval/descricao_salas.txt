@@ -1,11 +1,97 @@
 entrada:
+Você se sente estranho, parece que está sendo vigiado.
+Nessa entrada não parece ter nada de interessante além do papel
+escrito - 
+"VOCÊ SÓ PODERÁ SAIR DAQUI APÓS VISITAR TODAS AS SALAS!"
 
-corredor: 
-legal legal legal legal legal legal legal legal legal legal legal legal legal legal legal
-legal legal legal legal legal legal legal legal legal legal legal legal legal legal legal
-legal legal legal legal legal legal legal legal legal legal legal legal legal legal legal
-legal legal legal legal legal legal legal legal legal legal legal legal legal legal legal
-legal legal legal legal legal legal legal legal legal legal legal legal legal legal legal
+corredor:
+Você bate de frente com um corredor um tanto quanto 
+normal.
+Porém, há certos barulhos estranhos. Talvez seja má ideia
+(ou quem sabe boa) verificar...
 
-bau: 
-alguem alguem alguem
+bau:
+Um baú! Parece ser interessante, mas, não parece tão fácil de
+abrir..
+
+muralha:
+Uma baita de uma muralha! Mas é uma pena que não parece 
+haver nada de interessante.
+
+biblioteca:
+Livros, livros e mais livros. Isso parece ser uma biblioteca.
+Talvez haja algum item interessante aqui dentro. Ou algum
+livro para se destrair.
+
+ruínas:
+Parece que houve algum conflito por aqui... Essa ruínas
+parecem indicar que esse castelo é muito antigo.
+Escuto barulhos estranhos...
+
+torre:
+Uma torre! Que linda vista!
+
+armaria real:
+
+
+
+corredor2:
+
+
+salão comunal:
+
+
+
+torre2:
+
+
+
+calabouço:
+
+
+quarto real:
+
+
+
+corredor3:
+
+
+trono em ruínas:
+
+
+biblioteca2:
+
+
+celas:
+
+
+
+ponte:
+
+
+jardim real:
+
+
+chafariz monumental:
+
+
+muralha:
+
+
+feudo:
+
+sala de armadilhas:
+
+
+
+ruínas2:
+
+
+
+corredor4:
+
+
+
+saída:
+
+                      
