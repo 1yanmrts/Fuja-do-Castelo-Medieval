@@ -18,8 +18,8 @@ salas_ja_visitadas = []
 inventario = {'cura': 20, 'espada': 1, 'túnica de peles': 1}
 life = 100
 damage = 10
-chance_critico = 0.35 #35% de chance de dano crítico
-chance_errar = 0.4 #40% de chance de errar
+chance_critico = 0.3 #30% de chance de dano crítico
+chance_errar = 0.5 #50% de chance de errar
 
 def tamanhojanela(stdscr):
     """Define o tamanho da janela!"""
@@ -819,6 +819,7 @@ def salas(stdscr, room = None, save= None):
                 janela_action.addstr(1, 1, 'Ação:')
                 janela_status.addstr(1, 1, 'Status:')
                 janela_inventario.addstr(1, 1, 'Inventário:')
+
         case 'saída':
             if len(salas_ja_visitadas) == 24:
                 while True:
@@ -832,6 +833,17 @@ def salas(stdscr, room = None, save= None):
                     janela_inventario.addstr(1, 1, 'Inventário:')
             else:
                 popup('saída')
-                main(stdscr)    
+                main(stdscr)  
+                  
+        case 'quarto real':
+            while True:
+                janela.refresh()
+                janela_action.refresh()
+                janela_inventario.refresh()
+                janela_status.refresh()
+
+                janela_action.addstr(1, 1, 'Ação:')
+                janela_status.addstr(1, 1, 'Status:')
+                janela_inventario.addstr(1, 1, 'Inventário:')
 
 curses.wrapper(menuinicial)
