@@ -15,11 +15,13 @@ else:
 
 
 salas_ja_visitadas = []
+reliquias = []
 inventario = {'cura': 20, 'espada': 1, 'túnica de peles': 1}
 life = 100
 damage = 10
-chance_critico = 0.3 #30% de chance de dano crítico
-chance_errar = 0.5 #50% de chance de errar
+moedas = 100
+chance_critico = 0.2 #30% de chance de dano crítico
+chance_errar = 0.3 #50% de chance de errar
 
 def tamanhojanela(stdscr):
     """Define o tamanho da janela!"""
@@ -33,7 +35,7 @@ def menuinicial(stdscr):
     stdscr.clear()
     stdscr.refresh()
 
-    botoes = ['Inicio', 'Opções', 'Sair']
+    botoes = ['Inicio', 'Sair']
     pos_y = 0
 
     sh, sw = tamanhojanela(stdscr)
@@ -119,9 +121,6 @@ def menuinicial(stdscr):
                 if aux == botoes[0]:
                     main(stdscr)
                     break
-                elif aux == botoes[1]:
-                    opcaocontroles(stdscr)
-                    break
                 else:
                     break
 
@@ -144,54 +143,18 @@ def menuinicial(stdscr):
                 break
 
 
-def opcaocontroles(stdscr):
-    """Menu de controles"""
-    sh, sw = tamanhojanela(stdscr)
-    xjanela = sw//2
-    yjanela = sh//2
-    janela = curses.newwin(yjanela, xjanela, yjanela//2, xjanela//2)
-    janela.border()
-    janela.keypad(True)
-    
-    texto = [
-        'CONTROLES:',
-        '          ',
-        'Seta para cima (↑) para ir para cima ',
-        'Seta para a baixo (↓) para ir para baixo',
-        'Seta para a esquerda (←) para ir para a esquerda',
-        'Seta para a direita (→) para ir para a direita',
-        'Aperte TAB para abrir o menu de ações e escrever',
-        'Aperte I para abrir o inventário',
-        'Aperte ENTER ( ↵) para interagir e entrar em salas'
-        '',
-        '',
-        '',
-        'Aperte ESC para voltar',
-    ]
-
-    while True:
-
-        for linha in range(len(texto)):
-            janela.addstr(1 + linha, 1, texto[linha], curses.A_LOW)
-        
-        key = janela.getch()
-        if key == 27: #TECLA ESC
-            menuinicial(stdscr)
-
-        janela.refresh()
-
-
 def main(stdscr):
     """Tela principal do jogo. Onde aparece o mapa, inventário e vida. Aqui também é definido o movimento"""
+    global reliquias
     curses.curs_set(0)
     stdscr.clear()
     stdscr.refresh()
     matriz = [
-        ['entrada', 'corredor', 'bau', 'biblioteca', 'ruínas'],
+        ['entrada','ponte', 'corredor', 'baú', 'biblioteca'],
         ['torre', 'armaria real', 'corredor2', 'salão comunal', 'torre2'],
-        ['calabouço', 'quarto real', 'corredor3', 'trono em ruínas', 'biblioteca2'],
-        ['celas', 'ponte', 'jardim real', 'chafariz monumental', 'muralha'],
-        ['feudo', 'sala de armadilhas', 'ruínas2', 'corredor', 'saída'],
+        ['calabouço', 'quarto real', 'corredor3', 'trono real', 'biblioteca2'],
+        ['celas','capela', 'corredor4', 'jardim real', 'muralha fortificada'],
+        ['feudo', 'sala de armadilhas', 'poço dos desejos', 'chafariz monumental', 'saída'],
     ]
 
     sh, sw = tamanhojanela(stdscr)
@@ -213,9 +176,22 @@ def main(stdscr):
     janela_action.keypad(True)
     janela_info.keypad(True)
 
+    try:
+        if len(reliquias) == 3:
+            inventario['túnica rubro negra'] = 1
+            popup('item', 'túnica rubro negra', 1)
+            del inventario['relíquia da família real']
+            del inventario['relíquia do clérigo']
+            del inventario['relíquia dos ancestrais']
+            del reliquias
+    except:
+        pass
+        
+
     # Loop principal
     while True:
         janela.addstr(2, 2, 'Vida: {}'.format(life))
+        janela.addstr(2, sw - 20, 'Moedas: {}'.format(moedas))
         janela_info.addstr(1, 1, 'Informações: ')
 
         # Serve para apagar a info/display assim que passo para a sala seguinte e mostra a info da sala nova
@@ -310,7 +286,21 @@ def popup(tipo = None, valor = None, qtd = None, stdscr = None):
             janela_popup.refresh()
             janela_popup.clear()
             time.sleep(1.4)
-        
+
+        case 'chave':
+            janela_popup.addstr(1, 1, f'Você precisa da {valor}')
+            janela_popup.addstr(2, 1, 'para entrar nessa sala!') 
+            janela_popup.refresh()
+            janela_popup.clear()
+            time.sleep(1.4)
+
+        case 'comprou':
+            janela_popup.addstr(1, 1, f'Você comprou')
+            janela_popup.addstr(2, 1, f'{valor} ({qtd})') 
+            janela_popup.refresh()
+            janela_popup.clear()
+            time.sleep(1.4)
+
         case 'dano_recebido':
             janela_popup.addstr(1, 1, f'Você recebeu {valor} de dano do inimigo!')
             janela_popup.refresh()
@@ -318,13 +308,10 @@ def popup(tipo = None, valor = None, qtd = None, stdscr = None):
             time.sleep(1.4)
         
         case 'item':
-            if qtd == 1:
-                janela_popup.addstr(1, 1, f'Você recebeu um/uma {valor}!')
-            else:
-                janela_popup.addstr(1, 1, f'Você recebeu {qtd} {valor}s!')
+            janela_popup.addstr(1, 1, f'Você recebeu {valor}! ({qtd})')
             janela_popup.refresh()
             janela_popup.clear()
-            time.sleep(1.4)
+            time.sleep(1.4) 
 
         case 'errou':
             janela_popup.addstr(1, 1, f'Tente novamente!')
@@ -338,6 +325,12 @@ def popup(tipo = None, valor = None, qtd = None, stdscr = None):
             janela_popup.clear()
             time.sleep(1.4)
         
+        case 'moeda':
+            janela_popup.addstr(1, 1, f'Você recebeu {valor} moedas!')
+            janela_popup.refresh()
+            janela_popup.clear()
+            time.sleep(1.4)
+
         case 'n_equipou':
             janela_popup.addstr(1, 1, f'{valor.title()} não está no seu inventário')
             janela_popup.refresh()
@@ -353,11 +346,24 @@ def popup(tipo = None, valor = None, qtd = None, stdscr = None):
         case 'saída':
             janela_popup.addstr(1, 1, 'Você precisa visitar')
             janela_popup.addstr(2, 1, 'todas as salas para sair!')
-            janela_popup.addstr(5, 1, f'Ainda faltam {24 - len(salas_ja_visitadas)} salas!')
+            janela_popup.addstr(5, 1, f'Ainda faltam {17 - len(salas_ja_visitadas)} salas!')
+            janela_popup.addstr(7, 1, 'Você precisa da chave mestra também!')
             janela_popup.refresh()
             janela_popup.clear()
             time.sleep(1.4)
         
+        case 'sala_vazia':
+            janela_popup.addstr(1, 1, 'Sala Vazia!')
+            janela_popup.refresh()
+            janela_popup.clear()
+            time.sleep(1.6)
+
+        case 'sem_moedas':
+            janela_popup.addstr(1, 1, 'Sem moedas o suficiente!')
+            janela_popup.refresh()
+            janela_popup.clear()
+            time.sleep(1.6)
+
         case 'vitoria':
             janela_popup.addstr(1, 1, 'Você derrotou seu inimigo!')
             janela_popup.refresh()
@@ -398,11 +404,56 @@ def popup(tipo = None, valor = None, qtd = None, stdscr = None):
             janela_popup.refresh()
             janela_popup.clear()
             time.sleep(1.4)
+
         case 'curou':
-            janela_popup.addstr(1, 1, 'Você curou 20 de vida!')
+            janela_popup.addstr(1, 1, f'Você curou {valor} de vida!')
             janela_popup.refresh()
             janela_popup.clear()
             time.sleep(1.4)
+
+        case 'zerou':
+            janela_popup = curses.newwin(37, 139, 0, 0)
+            janela_popup.border()
+            imagem_final = [
+                "                            ==(W{==========-      /===-                        ",
+                "                              ||  (.--.)         /===-_---~~~~~~~~~------____  ",
+                "                              | \_,|**|,__      |===-~___                _,-' `",
+                "                 -==\\        `\ ' `--'   ),    `//~\\   ~~~~`---.___.-~~  ",
+                "             ______-==|        /`\_. .__/\ \    | |  \\           _-~` ",
+                "       __--~~~  ,-/-==\\      (   | .  |~~~~|   | |   `\        ,'",
+                "    _-~       /'    |  \\     )__/==0==-\<>/   / /      \      /",
+                "  .'        /       |   \\      /~\___/~~\/  /' /        \   /'",
+                " /  ____  /         |    \`\.__/-~~   \  |_/'  /          \/'",
+                "/-'~    ~~~~~---__  |     ~-/~         ( )   /'        _--~`  ",
+                "                  \_|      /        _) | ;  ),   __--~~  ",
+                "                    '~~--_/      _-~/- |/ \   '-~ \     ",
+                "                   {\__--_/}    / \\_>-|)<__\      \   ",
+                "                   /'   (_/  _-~  | |__>--<__|      | ",
+                "                  |   _/) )-~     | |__>--<__|      |",
+                "                  / /~ ,_/       / /__>---<__/      |",
+                "                 o-o _//        /-~_>---<__-~      / ",
+                "                 (^(~          /~_>---<__-      _-~ ",
+                "                ,/|           /__>--<__/     _-~  ",
+                "             ,//('(          |__>--<__|     /                  .----_     ",
+                "            ( ( '))          |__>--<__|    |                 /' _---_~\   ",
+                "         `-)) )) (           |__>--<__|    |               /'  /     ~\`\  ",
+                "        ,/,'//( (             \__>--<__\    \            /'  //        ||    ",
+                "      ,( ( ((, ))              ~-__>--<_~-_  ~--____---~' _/'/        /'  ",
+                "    `~/  )` ) ,/|                 ~-_~>--<_/-__       __-~ _/     ",
+                "  ._-~//( )/ )) `                    ~~-'_/_/ /~~~~~~~__--~    ",
+                "   ;'( ')/ ,)(                              ~~~~~~~~~~     ",
+                "  ' ') '( (/ ",
+                "    '   '  `",
+            ]
+
+            for linha in range(len(imagem_final)):
+                janela_popup.addstr(1 + linha, 10, imagem_final[linha])
+                janela_popup.refresh()
+                time.sleep(0.1)
+            time.sleep(1.4)
+            quit()
+
+
 
 def menuacao(stdscr, check, window, room=None):
     """Aqui vai ser recebido os comando de texto que serão executados.
@@ -422,16 +473,40 @@ def menuacao(stdscr, check, window, room=None):
     # Conversão para string
     texto = texto.decode().strip()
     partes = texto.split()
-
+            
     #essa fução concatena em "string" tudo que vem depois de equipar
     if 'equipar' in partes:
         string = ' '.join(partes[1:])
         equipamento(string)
 
-    if check == "principal":
-        return texto
+    if 'pólen' in partes:
+        if 'frasco de pólen' in inventario:
+            if life + 50 > 100:
+                life += (100 - life)
+                inventario['frasco de pólen'] -= 1
+                if inventario['frasco de pólen'] == 0:
+                    del inventario['frasco de pólen']
+            else: 
+                life += 50
+                inventario['frasco de pólen'] -= 1
+                if inventario['frasco de pólen'] == 0:
+                    del inventario['frasco de pólen']
+            popup('curou', 50)
 
-    if check == "sala" or check == 'principal':
+    if check == "principal":
+         if texto.lower() == 'curar' and life < 100:
+            if life + 20 > 100:
+                life += (100 - life)
+                inventario['cura'] -= 1
+            else: 
+                life += 20
+                inventario['cura'] -= 1
+            popup('curou', 20)
+            return texto
+         else:
+            return texto
+
+    if check == "sala":
         if texto.lower() == 'curar' and life < 100:
             if life + 20 > 100:
                 life += (life + 20) - 100
@@ -439,7 +514,7 @@ def menuacao(stdscr, check, window, room=None):
             else: 
                 life += 20
                 inventario['cura'] -= 1
-            popup('curou')
+            popup('curou', 20)
             return texto
 
         else:
@@ -484,7 +559,10 @@ def equipamento(item = None):
             arma = (tipo, item, descricao, dano)
         elif tipo == 'armor':
             defesa = allitems[item]['value']
-            life += defesa
+            if life < 100:
+                life += defesa
+            else:
+                life = 100 + defesa
             defense = (tipo, item, descricao, defesa)
         if inventario[item] == 0:
             del inventario[item]
@@ -524,8 +602,11 @@ def gear(stdscr, mochila = None, keypressed = None):
 
             for i, (elemento, valor) in enumerate(mochila.items()):
                 aux = f'{elemento}: {valor}'
-                janela.addstr(3 + i, 1, aux, curses.A_BOLD) 
-            
+                try:
+                    janela.addstr(3 + i, 1, aux, curses.A_BOLD)
+                except:
+                    janela.addstr(3 + i, 15, aux, curses.A_BOLD)
+
             for i in range(len(status)):
                 janela_equipamento.addstr(1 + i, 12, status[i])
             
@@ -611,7 +692,7 @@ def infosalas(sala):
 
 def salas(stdscr, room = None, save= None):
     """Janela que vai servir pra mostrar os conteúdos de uma sala"""
-    global life
+    global life, moedas
     curses.curs_set(0)
     stdscr.clear()
     stdscr.refresh()
@@ -686,7 +767,7 @@ def salas(stdscr, room = None, save= None):
     except:
         janela_status.addstr(5, 13, f'ARMADURA: ')
 
-
+    janela_status.addstr(len(status) + 2, 1, f'Moedas: {moedas}')
     janela_status.addstr(len(status) + 3, 1, f'Vida: {life}')
 
     for i, (elemento, valor) in enumerate(inventario.items()):
@@ -694,9 +775,78 @@ def salas(stdscr, room = None, save= None):
         janela_inventario.addstr(3 + i, 1, aux, curses.A_BOLD) 
 
     match room:
-        
-        case 'bau':
-            if 'bau' not in salas_ja_visitadas:
+        case 'entrada':
+            popup('sala_vazia')
+            main(stdscr)
+
+        case 'ponte':
+            if 'ponte' not in salas_ja_visitadas:
+                if save:
+                    enemy_life = save
+                else:
+                    enemy_life = 50
+                dano_do_inimigo = 15
+                while True:
+                    janela.addstr(sh - 2, 2, f"vida: {enemy_life}")
+                    janela_status.addstr(len(status) + 3, 1, f'Vida: {life}')
+                    for i in range(len(status)):
+                        janela_status.addstr(1 + i, 1, status[i])
+
+                    janela_inventario.addstr(1, 1, 'Inventário:')
+                    for i, (elemento, valor) in enumerate(inventario.items()):
+                        aux = f'{elemento}: {valor}'
+                        janela_inventario.addstr(3 + i, 1, aux, curses.A_BOLD) 
+                    
+                    janela.refresh()
+                    janela_action.refresh()
+                    janela_inventario.refresh()
+                    janela_status.refresh()
+
+                    action = menuacao(stdscr, "sala", janela_action, room)
+                    dano_feito, dano_levado = combate(dano_do_inimigo, damage, chance_critico, chance_errar)
+                    
+                    if action.lower() == 'atacar':
+                        if dano_feito == 0:
+                            popup('errou_ataque')
+                        elif dano_feito == damage * 2.0:
+                            popup('critical', dano_feito)
+                            enemy_life -= dano_feito
+                        else:
+                            enemy_life -= dano_feito
+                            popup('ataque', dano_feito)
+
+                    if enemy_life <= 0:
+                        popup('vitoria')
+                        salas_ja_visitadas.append('ponte')
+                        inventario['cura'] += 5
+                        moedas += 50
+                        popup('moeda', 50)
+                        popup('item', 'cura', 5)
+                        main(stdscr)
+                        break
+                    
+                    if dano_levado == 0:
+                        popup('inimigo_errou')
+                    
+                    if dano_levado == dano_do_inimigo * 2.0:
+                        popup('enemy_critical', dano_levado)
+                        life -= dano_levado
+                    else:
+                        life -= dano_levado
+                        popup('dano_recebido', dano_levado)
+                    
+                    if life < 0:
+                        popup('gameover', stdscr=stdscr)
+                        break
+                
+                    salas(stdscr, room='ponte', save=enemy_life)
+            
+            else:
+                popup('visited')
+                main(stdscr)
+
+        case 'baú':
+            if 'baú' not in salas_ja_visitadas:
                 while True:
                     janela.refresh()
                     janela_action.refresh()
@@ -711,36 +861,24 @@ def salas(stdscr, room = None, save= None):
 
                     
                     if action.lower() == '2123ond':
-                        inventario['bolo'] = 1
-                        popup('item', 'bolo', 1)
-                        inventario['pão'] = 5
-                        popup('item', 'pão', 5)
+                        moedas += 200
+                        popup('moeda', 200)
+                        inventario['cura'] += 5
+                        popup('item', 'cura', 5)
                         janela_inventario.refresh()
-                        salas_ja_visitadas.append('bau')
+                        salas_ja_visitadas.append('baú')
                         main(stdscr)
                         break
-            
+                    elif action.lower() == 'sair':
+                        main(stdscr)
+                        break
                     else:
                         popup('errou')
-                        salas(stdscr, 'bau')
+                        salas(stdscr, 'baú')
             else:
                 popup('visited')
                 main(stdscr)
-                
         
-        case 'entrada':
-            if 'entrada' not in salas_ja_visitadas:
-                while True:
-                    janela.refresh()
-                    janela_action.refresh()
-                    janela_inventario.refresh()
-                    janela_status.refresh()
-
-                    action = menuacao(stdscr, "sala", janela_action, room)
-                    salas_ja_visitadas.append('entrada')
-            else:
-                popup('visited')
-                main(stdscr)
 
         case 'corredor':
             if 'corredor' not in salas_ja_visitadas:
@@ -783,6 +921,8 @@ def salas(stdscr, room = None, save= None):
                         salas_ja_visitadas.append('corredor')
                         inventario['capa do drácula'] = 1
                         inventario['cura'] += 5
+                        moedas += 100
+                        popup('moeda', 100)
                         popup('item', 'capa do drácula', 1)
                         popup('item', 'cura', 5)
                         main(stdscr)
@@ -800,7 +940,6 @@ def salas(stdscr, room = None, save= None):
                     
                     if life < 0:
                         popup('gameover', stdscr=stdscr)
-                        salas_ja_visitadas.append('corredor')
                         break
                 
                     salas(stdscr, room='corredor', save=enemy_life)
@@ -810,18 +949,7 @@ def salas(stdscr, room = None, save= None):
                 main(stdscr)
             
         case 'biblioteca':
-            while True:
-                janela.refresh()
-                janela_action.refresh()
-                janela_inventario.refresh()
-                janela_status.refresh()
-
-                janela_action.addstr(1, 1, 'Ação:')
-                janela_status.addstr(1, 1, 'Status:')
-                janela_inventario.addstr(1, 1, 'Inventário:')
-
-        case 'saída':
-            if len(salas_ja_visitadas) == 24:
+            if 'biblioteca' not in salas_ja_visitadas:
                 while True:
                     janela.refresh()
                     janela_action.refresh()
@@ -831,19 +959,674 @@ def salas(stdscr, room = None, save= None):
                     janela_action.addstr(1, 1, 'Ação:')
                     janela_status.addstr(1, 1, 'Status:')
                     janela_inventario.addstr(1, 1, 'Inventário:')
+
+                    action = menuacao(stdscr, "sala", janela_action, room)
+
+                    if action.lower() == 'rio':
+                        inventario['chave riscada'] = 1
+                        popup('item', 'chave riscada', 1)
+                        salas_ja_visitadas.append('biblioteca')
+                        main(stdscr)
+                        break
+                    elif action.lower() == 'sair':
+                        main(stdscr)
+                        break
+                    else:
+                        popup('errou')
+                        salas(stdscr, 'biblioteca')
+            else:
+                popup('visited')
+                main(stdscr)
+
+        case 'torre':
+            if 'torre' not in salas_ja_visitadas:
+                if save:
+                    enemy_life = save
+                else:
+                    enemy_life = 200
+
+                dano_do_inimigo = 30
+                while True:
+                    janela.addstr(sh - 2, 2, f"vida: {enemy_life}")
+                    janela_status.addstr(len(status) + 3, 1, f'Vida: {life}')
+                    for i in range(len(status)):
+                        janela_status.addstr(1 + i, 1, status[i])
+
+                    janela_inventario.addstr(1, 1, 'Inventário:')
+                    for i, (elemento, valor) in enumerate(inventario.items()):
+                        aux = f'{elemento}: {valor}'
+                        janela_inventario.addstr(3 + i, 1, aux, curses.A_BOLD) 
+                    
+                    janela.refresh()
+                    janela_action.refresh()
+                    janela_inventario.refresh()
+                    janela_status.refresh()
+
+                    action = menuacao(stdscr, "sala", janela_action, room)
+                    dano_feito, dano_levado = combate(dano_do_inimigo, damage, chance_critico, chance_errar)
+                    
+                    if action.lower() == 'atacar':
+                        if dano_feito == 0:
+                            popup('errou_ataque')
+                        elif dano_feito == damage * 2.0:
+                            popup('critical', dano_feito)
+                            enemy_life -= dano_feito
+                        else:
+                            enemy_life -= dano_feito
+                            popup('ataque', dano_feito)
+
+                    if enemy_life <= 0:
+                        popup('vitoria')
+                        salas_ja_visitadas.append('torre')
+                        inventario['espada afiada'] = 1
+                        moedas += 200
+                        popup('item', 'espada afiada', 1)
+                        popup('moeda', 200)
+                        main(stdscr)
+                        break
+                    
+                    if dano_levado == 0:
+                        popup('inimigo_errou')
+                    
+                    if dano_levado == dano_do_inimigo * 2.0:
+                        popup('enemy_critical', dano_levado)
+                        life -= dano_levado
+                    else:
+                        life -= dano_levado
+                        popup('dano_recebido', dano_levado)
+                    
+                    if life < 0:
+                        popup('gameover', stdscr=stdscr)
+                        break
+                
+                    salas(stdscr, room='torre', save=enemy_life)
+            
+            else:
+                popup('visited')
+                main(stdscr)
+
+        case 'armaria real':
+            if 'chave riscada' in inventario:
+                while True:
+                    janela.refresh()
+                    janela_action.refresh()
+                    janela_inventario.refresh()
+                    janela_status.refresh()
+
+                    janela_action.addstr(1, 1, 'Ação:')
+                    janela_status.addstr(1, 1, 'Status:')
+                    janela_inventario.addstr(1, 1, 'Inventário:')
+                    
+                    action = menuacao(stdscr, "sala", janela_action, room)
+                    
+                    match action:
+                        case '1':
+                            if moedas >= 1000:
+                                moedas -= 1000
+                                inventario['excalibur'] = 1
+                                popup('comprou', 'excalibur', 1)
+                                salas(stdscr, 'armaria real')
+                            else:
+                                popup('sem_moedas')
+                                salas(stdscr, 'armaria real')
+
+                        case '2':
+                            if moedas >= 1000:
+                                moedas -= 1000
+                                inventario['armadura real'] = 1
+                                popup('comprou', 'armadura real', 1)
+                                salas(stdscr, 'armaria real')
+                            else:
+                                popup('sem_moedas')
+                                salas(stdscr, 'armaria real')
+
+                        case '3':
+                            if moedas >= 500:
+                                moedas -= 500
+                                inventario['elmo e calça de cota de malha'] = 1
+                                popup('comprou', 'elmo e calça de cota de malha', 1)
+                                salas(stdscr, 'armaria real')
+                            else:
+                                popup('sem_moedas')
+                                salas(stdscr, 'armaria real')
+
+                        case '4':
+                            if moedas >= 500:
+                                moedas -= 500
+                                inventario['arco e flecha'] = 1
+                                popup('comprou', 'arco e flecha', 1)
+                                salas(stdscr, 'armaria real')
+                            else:
+                                popup('sem_moedas')
+                                salas(stdscr, 'armaria real')
+
+                        case '5':
+                            if moedas >= 50:
+                                moedas -= 50
+                                inventario['cura'] += 1
+                                popup('comprou', 'cura', 1)
+                                salas(stdscr, 'armaria real')
+                            else:
+                                popup('sem_moedas')
+                                salas(stdscr, 'armaria real')
+
+                        case 'sair': 
+                            main(stdscr)
+
+            else:
+                popup('chave', 'chave riscada')
+                main(stdscr)
+
+        case 'corredor2':
+            popup('sala_vazia')
+            main(stdscr)
+
+        case 'salão comunal':
+            if 'salão comunal' not in salas_ja_visitadas:
+                while True:
+                    janela.refresh()
+                    janela_action.refresh()
+                    janela_inventario.refresh()
+                    janela_status.refresh()
+
+                    janela_action.addstr(1, 1, 'Ação:')
+                    janela_status.addstr(1, 1, 'Status:')
+                    janela_inventario.addstr(1, 1, 'Inventário:')
+
+                    action = menuacao(stdscr, "sala", janela_action, room)
+
+                    if action.lower() == '20':
+                        inventario['chave enferrujada'] = 1
+                        popup('item', 'chave enferrujada', 1)
+                        salas_ja_visitadas.append('salão comunal')
+                        main(stdscr)
+                        break
+                    elif action.lower() == 'sair':
+                        main(stdscr)
+                        break
+                    else:
+                        popup('errou')
+                        salas(stdscr, 'salão comunal')
+            else:
+                popup('visited')
+                main(stdscr)
+
+        case 'torre2':
+            if 'torre2' not in salas_ja_visitadas:
+                if save:
+                    enemy_life = save
+                else:
+                    enemy_life = 200
+
+                dano_do_inimigo = 30
+                while True:
+                    janela.addstr(sh - 2, 2, f"vida: {enemy_life}")
+                    janela_status.addstr(len(status) + 3, 1, f'Vida: {life}')
+                    for i in range(len(status)):
+                        janela_status.addstr(1 + i, 1, status[i])
+
+                    janela_inventario.addstr(1, 1, 'Inventário:')
+                    for i, (elemento, valor) in enumerate(inventario.items()):
+                        aux = f'{elemento}: {valor}'
+                        janela_inventario.addstr(3 + i, 1, aux, curses.A_BOLD) 
+                    
+                    janela.refresh()
+                    janela_action.refresh()
+                    janela_inventario.refresh()
+                    janela_status.refresh()
+
+                    action = menuacao(stdscr, "sala", janela_action, room)
+                    dano_feito, dano_levado = combate(dano_do_inimigo, damage, chance_critico, chance_errar)
+                    
+                    if action.lower() == 'atacar':
+                        if dano_feito == 0:
+                            popup('errou_ataque')
+                        elif dano_feito == damage * 2.0:
+                            popup('critical', dano_feito)
+                            enemy_life -= dano_feito
+                        else:
+                            enemy_life -= dano_feito
+                            popup('ataque', dano_feito)
+
+                    if enemy_life <= 0:
+                        popup('vitoria')
+                        salas_ja_visitadas.append('torre2')
+                        moedas += 200
+                        popup('moeda', 200)
+                        main(stdscr)
+                        break
+                    
+                    if dano_levado == 0:
+                        popup('inimigo_errou')
+                    
+                    if dano_levado == dano_do_inimigo * 2.0:
+                        popup('enemy_critical', dano_levado)
+                        life -= dano_levado
+                    else:
+                        life -= dano_levado
+                        popup('dano_recebido', dano_levado)
+                    
+                    if life < 0:
+                        popup('gameover', stdscr=stdscr)
+                        break
+                
+                    salas(stdscr, room='torre2', save=enemy_life)
+            
+            else:
+                popup('visited')
+                main(stdscr)
+
+        case 'calabouço':
+            if 'calabouço' not in salas_ja_visitadas:
+                if save:
+                    enemy_life = save
+                else:
+                    enemy_life = 250
+
+                dano_do_inimigo = 35
+                while True:
+                    janela.addstr(sh - 2, 2, f"vida: {enemy_life}")
+                    janela_status.addstr(len(status) + 3, 1, f'Vida: {life}')
+                    for i in range(len(status)):
+                        janela_status.addstr(1 + i, 1, status[i])
+
+                    janela_inventario.addstr(1, 1, 'Inventário:')
+                    for i, (elemento, valor) in enumerate(inventario.items()):
+                        aux = f'{elemento}: {valor}'
+                        janela_inventario.addstr(3 + i, 1, aux, curses.A_BOLD) 
+                    
+                    janela.refresh()
+                    janela_action.refresh()
+                    janela_inventario.refresh()
+                    janela_status.refresh()
+
+                    action = menuacao(stdscr, "sala", janela_action, room)
+                    dano_feito, dano_levado = combate(dano_do_inimigo, damage, chance_critico, chance_errar)
+                    
+                    if action.lower() == 'atacar':
+                        if dano_feito == 0:
+                            popup('errou_ataque')
+                        elif dano_feito == damage * 2.0:
+                            popup('critical', dano_feito)
+                            enemy_life -= dano_feito
+                        else:
+                            enemy_life -= dano_feito
+                            popup('ataque', dano_feito)
+
+                    if enemy_life <= 0:
+                        popup('vitoria')
+                        salas_ja_visitadas.append('calabouço')
+                        inventario['armadura da harpia'] = 1
+                        moedas += 200
+                        popup('item', 'armadura da harpia', 1)
+                        popup('moeda', 200)
+                        main(stdscr)
+                        break
+                    
+                    if dano_levado == 0:
+                        popup('inimigo_errou')
+                    
+                    if dano_levado == dano_do_inimigo * 2.0:
+                        popup('enemy_critical', dano_levado)
+                        life -= dano_levado
+                    else:
+                        life -= dano_levado
+                        popup('dano_recebido', dano_levado)
+                    
+                    if life < 0:
+                        popup('gameover', stdscr=stdscr)
+                        break
+                
+                    salas(stdscr, room='calabouço', save=enemy_life)
+            
+            else:
+                popup('visited')
+                main(stdscr)
+
+        case 'quarto real':
+            if 'quarto real' not in salas_ja_visitadas:
+                if 'chave enferrujada' in inventario:
+                    while True:
+                        janela.refresh()
+                        janela_action.refresh()
+                        janela_inventario.refresh()
+                        janela_status.refresh()
+
+                        janela_action.addstr(1, 1, 'Ação:')
+                        janela_status.addstr(1, 1, 'Status:')
+                        janela_inventario.addstr(1, 1, 'Inventário:')
+
+                        action = menuacao(stdscr, "sala", janela_action, room)
+
+                        if action.lower() == 'explorar':
+                            moedas += 250
+                            popup('moeda', 250)
+                            salas_ja_visitadas.append('quarto real')
+                            main(stdscr)
+                            break
+                        if action.lower() == 'sair':
+                            salas_ja_visitadas.append('quarto real')
+                            main(stdscr)
+                            break
+                else:
+                    popup('chave', 'chave enferrujada')
+                    main(stdscr)
+            else:
+                popup('visited')
+                main(stdscr)
+
+        case 'corredor3':
+            popup('sala_vazia')
+            main(stdscr)
+
+        case 'trono real':
+            if 'trono real' not in salas_ja_visitadas:
+                inventario['relíquia da família real'] = 1
+                reliquias.append('relíquia da família real')
+                moedas += 200
+                popup('moeda', 200)
+                popup('item', 'relíquia da família real', 1)
+                salas_ja_visitadas.append('trono real')
+                main(stdscr)
+            else:
+                popup('visited')
+                main(stdscr)
+
+        case 'biblioteca2':
+            popup('sala_vazia')
+            main(stdscr)
+
+        case 'celas':
+            if 'celas' not in salas_ja_visitadas:
+                if save:
+                    enemy_life = save
+                else:
+                    enemy_life = 100
+
+                dano_do_inimigo = 25
+                while True:
+                    janela.addstr(sh - 2, 2, f"vida: {enemy_life}")
+                    janela_status.addstr(len(status) + 3, 1, f'Vida: {life}')
+                    for i in range(len(status)):
+                        janela_status.addstr(1 + i, 1, status[i])
+
+                    janela_inventario.addstr(1, 1, 'Inventário:')
+                    for i, (elemento, valor) in enumerate(inventario.items()):
+                        aux = f'{elemento}: {valor}'
+                        janela_inventario.addstr(3 + i, 1, aux, curses.A_BOLD) 
+                    
+                    janela.refresh()
+                    janela_action.refresh()
+                    janela_inventario.refresh()
+                    janela_status.refresh()
+
+                    action = menuacao(stdscr, "sala", janela_action, room)
+                    dano_feito, dano_levado = combate(dano_do_inimigo, damage, chance_critico, chance_errar)
+                    
+                    if action.lower() == 'atacar':
+                        if dano_feito == 0:
+                            popup('errou_ataque')
+                        elif dano_feito == damage * 2.0:
+                            popup('critical', dano_feito)
+                            enemy_life -= dano_feito
+                        else:
+                            enemy_life -= dano_feito
+                            popup('ataque', dano_feito)
+
+                    if enemy_life <= 0:
+                        popup('vitoria')
+                        salas_ja_visitadas.append('celas')
+                        inventario['armadura de ossos'] = 1
+                        moedas += 100
+                        popup('item', 'armadura de ossos', 1)
+                        popup('moeda', 100)
+                        main(stdscr)
+                        break
+                    
+                    if dano_levado == 0:
+                        popup('inimigo_errou')
+                    
+                    if dano_levado == dano_do_inimigo * 2.0:
+                        popup('enemy_critical', dano_levado)
+                        life -= dano_levado
+                    else:
+                        life -= dano_levado
+                        popup('dano_recebido', dano_levado)
+                    
+                    if life < 0:
+                        popup('gameover', stdscr=stdscr)
+                        break
+                
+                    salas(stdscr, room='celas', save=enemy_life)
+            
+            else:
+                popup('visited')
+                main(stdscr)
+        
+        case 'capela':
+            if 'capela' not in salas_ja_visitadas:
+                inventario['relíquia do clérigo'] = 1
+                reliquias.append('relíquia do clérigo')
+                popup('item', 'relíquia do clérigo', 1)
+                salas_ja_visitadas.append('capela')
+                main(stdscr)
+            else:
+                popup('visited')
+                main(stdscr)
+        
+        case 'corredor4':
+            if 'corredor4' not in salas_ja_visitadas:
+                if save:
+                    enemy_life = save
+                else:
+                    enemy_life = 250
+                dano_do_inimigo = 35
+                while True:
+                    janela.addstr(sh - 2, 2, f"vida: {enemy_life}")
+                    janela_status.addstr(len(status) + 3, 1, f'Vida: {life}')
+                    for i in range(len(status)):
+                        janela_status.addstr(1 + i, 1, status[i])
+
+                    janela_inventario.addstr(1, 1, 'Inventário:')
+                    for i, (elemento, valor) in enumerate(inventario.items()):
+                        aux = f'{elemento}: {valor}'
+                        janela_inventario.addstr(3 + i, 1, aux, curses.A_BOLD) 
+                    
+                    janela.refresh()
+                    janela_action.refresh()
+                    janela_inventario.refresh()
+                    janela_status.refresh()
+
+                    action = menuacao(stdscr, "sala", janela_action, room)
+                    dano_feito, dano_levado = combate(dano_do_inimigo, damage, chance_critico, chance_errar)
+                    
+                    if action.lower() == 'atacar':
+                        if dano_feito == 0:
+                            popup('errou_ataque')
+                        elif dano_feito == damage * 2.0:
+                            popup('critical', dano_feito)
+                            enemy_life -= dano_feito
+                        else:
+                            enemy_life -= dano_feito
+                            popup('ataque', dano_feito)
+
+                    if enemy_life <= 0:
+                        popup('vitoria')
+                        salas_ja_visitadas.append('corredor4')
+                        inventario['chave mestra'] = 1
+                        moedas += 200
+                        popup('moeda', 200)
+                        popup('item', 'chave mestra', 1)
+                        main(stdscr)
+                        break
+                    
+                    if dano_levado == 0:
+                        popup('inimigo_errou')
+                    
+                    if dano_levado == dano_do_inimigo * 2.0:
+                        popup('enemy_critical', dano_levado)
+                        life -= dano_levado
+                    else:
+                        life -= dano_levado
+                        popup('dano_recebido', dano_levado)
+                    
+                    if life < 0:
+                        popup('gameover', stdscr=stdscr)
+                        break
+                
+                    salas(stdscr, room='corredor4', save=enemy_life)
+            
+            else:
+                popup('visited')
+                main(stdscr)
+
+        case 'jardim real':
+            if 'jardim real' not in salas_ja_visitadas:
+                while True:
+                    janela.refresh()
+                    janela_action.refresh()
+                    janela_inventario.refresh()
+                    janela_status.refresh()
+
+                    janela_action.addstr(1, 1, 'Ação:')
+                    janela_status.addstr(1, 1, 'Status:')
+                    janela_inventario.addstr(1, 1, 'Inventário:')
+
+                    action = menuacao(stdscr, "sala", janela_action, room)
+
+                    if action.lower() == '51':
+                        inventario['frasco de pólen'] = 5
+                        popup('item', 'frasco de pólen', 5)
+                        salas_ja_visitadas.append('jardim real')
+                        main(stdscr)
+                        break
+                    elif action.lower() == 'sair':
+                        main(stdscr)
+                        break
+                    else:
+                        popup('errou')
+                        salas(stdscr, 'jardim real')
+            else:
+                popup('visited')
+                main(stdscr)
+
+        case 'muralha fortificada':
+            popup('sala_vazia')
+            main(stdscr)
+
+        case 'feudo':
+            if 'feudo' not in salas_ja_visitadas:
+                inventario['relíquia dos ancestrais'] = 1
+                reliquias.append('relíquia dos ancestrais')
+                popup('item', 'relíquia dos ancestrais', 1)
+                salas_ja_visitadas.append('feudo')
+                main(stdscr)
+            else:
+                popup('visited')
+                main(stdscr)
+
+        case 'sala de armadilhas':
+            if 'sala de armadilhas' not in salas_ja_visitadas:
+                while True:
+                    janela.refresh()
+                    janela_action.refresh()
+                    janela_inventario.refresh()
+                    janela_status.refresh()
+
+                    janela_action.addstr(1, 1, 'Ação:')
+                    janela_status.addstr(1, 1, 'Status:')
+                    janela_inventario.addstr(1, 1, 'Inventário:')
+
+                    action = menuacao(stdscr, "sala", janela_action, room)
+
+                    if action.lower() == 'xeque-mate pastor' or 'xeque-mate do pastor':
+                        moedas += 500
+                        popup('moeda', 500)
+                        salas_ja_visitadas.append('sala de armadilhas')
+                        main(stdscr)
+                        break
+
+                    else:
+                        popup('errou')
+                        salas(stdscr, 'sala de armadilhas')
+            else:
+                popup('visited')
+                main(stdscr)
+
+        case 'poço dos desejos':
+            if 'poço dos desejos' not in salas_ja_visitadas:
+                moedas += 50
+                popup('moeda', 50)
+                salas_ja_visitadas.append('poço dos desejos')
+                main(stdscr)
+            else:
+                popup('visited')
+                main(stdscr)
+
+        case 'chafariz monumental':
+            popup('sala_vazia')
+            main(stdscr)
+
+        case 'saída':
+            if len(salas_ja_visitadas) == 17 and 'chave mestra' in inventario:
+                if save:
+                    enemy_life = save
+                else:
+                    enemy_life = 400
+                dano_do_inimigo = 60
+                while True:
+                    janela.addstr(sh - 2, 2, f"vida: {enemy_life}")
+                    janela_status.addstr(len(status) + 3, 1, f'Vida: {life}')
+                    for i in range(len(status)):
+                        janela_status.addstr(1 + i, 1, status[i])
+
+                    janela_inventario.addstr(1, 1, 'Inventário:')
+                    for i, (elemento, valor) in enumerate(inventario.items()):
+                        aux = f'{elemento}: {valor}'
+                        janela_inventario.addstr(3 + i, 1, aux, curses.A_BOLD) 
+                    
+                    janela.refresh()
+                    janela_action.refresh()
+                    janela_inventario.refresh()
+                    janela_status.refresh()
+
+                    action = menuacao(stdscr, "sala", janela_action, room)
+                    dano_feito, dano_levado = combate(dano_do_inimigo, damage, chance_critico, chance_errar)
+                    
+                    if action.lower() == 'atacar':
+                        if dano_feito == 0:
+                            popup('errou_ataque')
+                        elif dano_feito == damage * 2.0:
+                            popup('critical', dano_feito)
+                            enemy_life -= dano_feito
+                        else:
+                            enemy_life -= dano_feito
+                            popup('ataque', dano_feito)
+
+                    if enemy_life <= 0:
+                        popup('vitoria')
+                        popup('zerou')
+                        main(stdscr)
+                        break
+                    
+                    if dano_levado == 0:
+                        popup('inimigo_errou')
+                    
+                    if dano_levado == dano_do_inimigo * 2.0:
+                        popup('enemy_critical', dano_levado)
+                        life -= dano_levado
+                    else:
+                        life -= dano_levado
+                        popup('dano_recebido', dano_levado)
+                    
+                    if life < 0:
+                        popup('gameover', stdscr=stdscr)
+                        break
+                
+                    salas(stdscr, room='saída', save=enemy_life)
             else:
                 popup('saída')
                 main(stdscr)  
-                  
-        case 'quarto real':
-            while True:
-                janela.refresh()
-                janela_action.refresh()
-                janela_inventario.refresh()
-                janela_status.refresh()
-
-                janela_action.addstr(1, 1, 'Ação:')
-                janela_status.addstr(1, 1, 'Status:')
-                janela_inventario.addstr(1, 1, 'Inventário:')
+        
 
 curses.wrapper(menuinicial)

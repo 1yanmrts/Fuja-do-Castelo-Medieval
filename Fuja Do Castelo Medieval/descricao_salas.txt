@@ -5,13 +5,19 @@ escrito -                                                                   "VOC
 "CUIDADO POIS AO ENTRAR NUMA SALA TALVEZ VOCÊ NÃO 
 CONSEGUIRÁ SAIR"
 
+ponte:
+Uma estrutura de pedra que atravessa um abismo, 
+com paredes baixas e musgo crescendo entre as pedras.
+Parece que há algo estranho aqui que corre muito rápido e que 
+esconde alguns itens. Talvez valha a pena verificar.
+
 corredor:
 Você bate de frente com um corredor um tanto quanto 
 normal.
 Porém, há certos barulhos estranhos. Talvez seja má ideia
 (ou quem sabe boa) verificar...
 
-bau:
+baú:
 Um baú! Parece ser interessante, mas, não parece tão fácil de
 abrir..
 
@@ -24,17 +30,17 @@ Livros, livros e mais livros. Isso parece ser uma biblioteca.
 Talvez haja algum item interessante aqui dentro. Ou algum
 livro para se destrair.
 
-ruínas:
-Parece que houve algum conflito por aqui... Essa ruínas
-parecem indicar que esse castelo é muito antigo.
-Escuto barulhos estranhos...
+capela:
+Parece ser uma capela. Pelo visto os moradores desse castelo eram religiosos.
+Talvez haja alguma relíquia por aqui.
 
 torre:
 Uma torre! Que linda vista!
 
 armaria real:
 Armaduras! Parece que aqui há ótimos itens! Mas parece ser
-difícil conseguí-los. Parece haver um monstro muito grande.
+difícil conseguí-los. Parece a porta está trancada, preciso de
+alguma chave para abrir pelo visto.
 
 
 corredor2:
@@ -62,11 +68,11 @@ tapeçarias ricas e móveis elegantes.
 corredor3:
 Um corredor estreito com chão de pedra e algumas 
 tochas iluminando o caminho, silencioso e deserto.
-Mas não parece haver nada de interessante.
+Mas não parece haver nada de interessante. 
 
-trono em ruínas:
-Uma sala vasta onde um trono desmoronado fica ao centro, 
-cercado por pedras e destroços.
+trono real:
+Uma sala vasta onde um trono desmoronado fica ao centro. Por incrível que
+pareça, o trono está em perfeito estado.
 Talvez haja algo interessante escondido aqui.
 
 biblioteca2:
@@ -78,10 +84,6 @@ celas:
 Pequenos compartimentos sombrios com portas 
 de grades de ferro, usados para aprisionar indivíduos. Tem um esqueleto por ali...
 
-ponte:
-Uma estrutura de pedra que atravessa um abismo, 
-com paredes baixas e musgo crescendo entre as pedras.
-
 jardim real:
 Um jardim exuberante com flores coloridas, 
 fontes ornamentais e caminhos de cascalho bem cuidados.
@@ -92,9 +94,8 @@ Um chafariz grandioso esculpido em mármore,
 com várias camadas de água corrente e estátuas ornamentais.
 É um bom lugar para passar o tempo.
 
-muralha:
-Uma alta fortificação que cerca o castelo, 
-construída com grandes blocos de pedra e torres de vigia.
+muralha fortificada:
+Uma alta fortificação que cerca o castelo, construída com grandes blocos de pedra e torres de vigia.
 Não parece haver nada de interessante aqui.
 
 feudo:
@@ -103,11 +104,13 @@ com casas de madeira, campos cultivados e uma praça central. Parece que aqui qu
 
 sala de armadilhas:
 Um aposento cheio de mecanismos traiçoeiros, 
-com piso falso, dardos escondidos e lâminas móveis.
+com piso falso, dardos escondidos e lâminas móveis. Parece
+haver um tabuleiro de xadrez ali, estranho...
     
-ruínas2:
-Restos de um edifício antigo, com paredes desmoronadas, 
-pilares partidos e vegetação crescendo entre os escombros.
+poço dos desejos:
+Aqui parece ser o poço que supria as necessidades de aguá em situações emergenciais. Está seco.
+Parece haver um monte de moedas no fundo... Será que esse era um poço de desejos? Talvez ele 
+atenda o meu...
 
 corredor4:
 Outro corredor estreito, ligeiramente 
