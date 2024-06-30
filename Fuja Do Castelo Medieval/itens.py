@@ -17,7 +17,7 @@ allitems = {
     'excalibur': {
         'type': 'melee',
         'description': 'a própria espada do Rei Arthur',
-        'value': 150,
+        'value': 100,
     },
     'túnica de peles': {
         'type': 'armor',
