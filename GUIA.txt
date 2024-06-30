@@ -1,0 +1,69 @@
+GUIA:
+
+PRIMEIRA INICIALIZAÇÃO:
+
+Ao inicializar o jogo pela primeira vez (seja no terminal ou em algum compilador), o programa verificará a existência
+do módulo curses no sistema. Caso já esteja instalado, o jogo inicializará. Caso não, o módulo será instalado e, 
+provavelmente, será necessário abrir novamente o jogo. 
+
+DENTRO DO MENU INICIAL:
+
+No menu inicial, o usuário pode navegar pelas opções utilizando as setas para cima e para baixo do teclado. E para
+interagir, pressionar ENTER.
+
+DENTRO DO MENU PRINCIPAL DO JOGO:
+
+Comandos de texto:
+
+"Norte" (ou N) para andar para cima (para o norte);
+"Sul" (ou S) para andar para baixo (para o sul);
+"Leste" (ou L) para andar para a direita (para o leste);
+"Oeste" (ou O) para andar para a esquerda (para o oeste);
+
+"entrar" (para entrar numa sala)
+
+"gear" ou "equipamento" (caso o jogador queira ver seus itens e equipamentos equipados)
+(*para sair dessa janela, o jogador deve pressionar ESC.*)
+
+"equipar {nome do item}" (tem que escrever o nome do item sem as chaves) (equipar algum item que esteja no inventário)
+
+"curar" (para curar)
+
+"atacar" (dentro de uma sala) (caso haja inimigo)
+
+obs: não é possível equipar um item dentro de uma sala. Apenas é possível se curar ou atacar ou resolver o que se pede
+
+
+ITENS:
+
+Espada: já te acompanha desde o início do jogo. Tem 30 de dano.
+
+Espada afiada: obtida através da morte de uma gárgula.Tem 40 de dano.
+
+Arco e flecha: obtido através da compra por 500 moedas. Tem 50 de dano.
+
+Excalibur: obtida através da compra por 1000 moedas. Tem 100 de dano.
+
+Túnica de peles: já te acompanha desde o início do jogo. Tem 50 de defesa.
+
+Capa do Drácula: obtida através da morte de um vampiro. Tem 100 de defesa.
+
+Armadura da Harpia: obtida através da morte de uma harpia. Tem 150 de defesa.
+
+Armadura de Ossos: obtida através da morte de um esqueleto. Tem 200 de defesa.
+
+Elmo e calça de cota de malha: obtido através da compra por 500 moedas. Tem 300 de defesa.
+
+Túnica rubro negra: obtida após o jogador juntar três relíquias. Tem 350 de defesa.
+
+Armadura real: obtida através da compra por 1000 moedas. Tem 500 de defesa.
+
+Frasco de Pólen: obtido no jardim esse frasco te da 50 de vida. Para usá-lo, digite "usar Frasco de Pólen"
+
+Cura: te acompanha desde o início do jogo. Te cura 20 de vida.
+
+
+
+
+
+ 
